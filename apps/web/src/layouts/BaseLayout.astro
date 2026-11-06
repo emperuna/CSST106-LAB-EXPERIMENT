@@ -1,0 +1,202 @@
+---
+import "@csst106/tokens/tokens.css";
+import "@csst106/ui/styles.css";
+import { getCollection } from "astro:content";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "CSST106 Perception and Computer Vision laboratory experiments." } = Astro.props;
+const labs = (await getCollection("labs")).sort((a, b) => a.data.number - b.data.number);
+const current = Astro.url.pathname.replace(/\/$/, "");
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='3' fill='%238f2424'/><circle cx='8' cy='8' r='3' fill='white'/></svg>" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <div class="shell">
+      <aside class="sidebar">
+        <a class="brand" href="/">
+          <strong>CSST106</strong>
+          <span>Perception and Computer Vision</span>
+        </a>
+        <nav aria-label="Laboratory activities">
+          <ol>
+            {
+              labs.map((lab) => {
+                const href = `/labs/${lab.data.number}`;
+                return (
+                  <li>
+                    <a href={href} aria-current={current === href ? "page" : undefined}>
+                      <span class="number">{lab.data.number}</span>
+                      {lab.data.title}
+                    </a>
+                  </li>
+                );
+              })
+            }
+          </ol>
+        </nav>
+      </aside>
+      <main id="content">
+        <slot />
+      </main>
+    </div>
+    <script>
+      // On phones the lab list scrolls sideways; keep the current lab in view.
+      document
+        .querySelector('.sidebar a[aria-current="page"]')
+        ?.scrollIntoView({ block: "nearest", inline: "center" });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: var(--text-md);
+    line-height: 1.55;
+  }
+  a {
+    color: var(--color-accent);
+  }
+  a:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    overflow-wrap: anywhere;
+  }
+  .skip-link {
+    position: absolute;
+    left: var(--space-2);
+    top: -4rem;
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface);
+  }
+  .skip-link:focus {
+    top: var(--space-2);
+  }
+  .shell {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+    min-height: 100vh;
+  }
+  .sidebar {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow-y: auto;
+    padding: var(--space-6) var(--space-3);
+    border-right: 1px solid var(--color-border);
+  }
+  .brand {
+    display: flex;
+    flex-direction: column;
+    padding: 0 var(--space-3) var(--space-5);
+    color: inherit;
+    text-decoration: none;
+  }
+  .brand strong {
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+  }
+  .brand span {
+    font-size: var(--text-xs);
+    color: var(--color-muted);
+  }
+  .sidebar ol {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sidebar nav a {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    line-height: 1.3;
+    color: var(--color-text);
+    text-decoration: none;
+    border-radius: var(--radius);
+  }
+  .sidebar nav a:hover {
+    background: var(--color-sunken);
+  }
+  .sidebar nav a[aria-current="page"] {
+    font-weight: 600;
+    background: var(--color-sunken);
+    box-shadow: inset 2px 0 0 var(--color-accent);
+  }
+  .number {
+    flex: none;
+    width: 1em;
+    font-family: var(--font-mono);
+    color: var(--color-muted);
+  }
+  main {
+    min-width: 0;
+    box-sizing: border-box;
+    max-width: 82rem;
+    padding: var(--space-8);
+  }
+  @media (max-width: 52rem) {
+    .shell {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .sidebar {
+      position: static;
+      height: auto;
+      padding: var(--space-3) var(--space-4);
+      border-right: 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .brand {
+      padding: 0 0 var(--space-2);
+    }
+    .sidebar ol {
+      flex-direction: row;
+      overflow-x: auto;
+      scrollbar-width: none;
+      gap: var(--space-1);
+      margin: 0 calc(var(--space-4) * -1);
+      padding: 0 var(--space-4);
+    }
+    .sidebar li {
+      flex: none;
+    }
+    .sidebar nav a {
+      white-space: nowrap;
+      padding: var(--space-2);
+    }
+    .sidebar nav a[aria-current="page"] {
+      box-shadow: inset 0 -2px 0 var(--color-accent);
+    }
+    main {
+      padding: var(--space-5) var(--space-4);
+    }
+  }
+</style>

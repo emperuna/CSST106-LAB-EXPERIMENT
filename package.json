@@ -1,0 +1,26 @@
+{
+  "name": "csst106-lab-experiment",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev:web": "pnpm --filter @csst106/web dev",
+    "dev:api": "uv run uvicorn api.main:app --reload --port 8000",
+    "build": "pnpm --filter @csst106/web build",
+    "typecheck": "pnpm --filter @csst106/web typecheck",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "gen:api": "uv run python scripts/export_openapi.py && pnpm --filter @csst106/api-client gen",
+    "test:py": "uv run pytest"
+  },
+  "prettier": "@csst106/config/prettier",
+  "devDependencies": {
+    "@csst106/config": "workspace:^",
+    "eslint": "^9",
+    "prettier": "^3",
+    "typescript": "^5"
+  }
+}

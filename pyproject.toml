@@ -1,0 +1,23 @@
+[project]
+name = "csst106-lab-experiment"
+version = "0.1.0"
+description = "CSST106 Perception and Computer Vision laboratory experiments"
+requires-python = ">=3.12,<3.13"
+dependencies = ["cv-labs", "csst106-api"]
+
+[dependency-groups]
+dev = ["pytest>=8", "httpx>=0.27"]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["packages/cv-labs", "apps/api"]
+
+[tool.uv.sources]
+cv-labs = { workspace = true }
+csst106-api = { workspace = true }
+
+[tool.pytest.ini_options]
+testpaths = ["packages/cv-labs/tests", "apps/api/tests"]
+addopts = "--import-mode=importlib"

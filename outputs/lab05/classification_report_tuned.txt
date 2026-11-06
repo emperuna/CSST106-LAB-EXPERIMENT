@@ -1,0 +1,13 @@
+                   precision    recall  f1-score   support
+
+     Ariel Sharon       0.80      0.73      0.76        11
+     Colin Powell       0.71      0.94      0.81        47
+  Donald Rumsfeld       0.76      0.73      0.74        22
+    George W Bush       0.96      0.92      0.94       119
+Gerhard Schroeder       0.90      0.95      0.92        19
+      Hugo Chavez       1.00      0.62      0.76        13
+       Tony Blair       0.91      0.78      0.84        27
+
+         accuracy                           0.87       258
+        macro avg       0.86      0.81      0.82       258
+     weighted avg       0.88      0.87      0.87       258

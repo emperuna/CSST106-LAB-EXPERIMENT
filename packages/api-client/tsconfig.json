@@ -1,0 +1,1 @@
+{ "extends": "@csst106/config/tsconfig", "include": ["src"] }

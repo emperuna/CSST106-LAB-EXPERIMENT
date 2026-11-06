@@ -1,0 +1,38 @@
+{
+  "source": "https://github.com/ultralytics/assets/releases/download/v0.0.0/african-wildlife.zip",
+  "names": [
+    "buffalo",
+    "elephant",
+    "rhino",
+    "zebra"
+  ],
+  "splits": {
+    "test": {
+      "images": 28,
+      "objects_per_class": [
+        9,
+        19,
+        10,
+        10
+      ]
+    },
+    "train": {
+      "images": 120,
+      "objects_per_class": [
+        43,
+        49,
+        39,
+        65
+      ]
+    },
+    "val": {
+      "images": 28,
+      "objects_per_class": [
+        11,
+        10,
+        11,
+        16
+      ]
+    }
+  }
+}

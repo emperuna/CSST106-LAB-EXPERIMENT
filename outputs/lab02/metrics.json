@@ -1,0 +1,12 @@
+{
+  "image": "/Users/admin/Developer/school/CSST106-LAB-EXPERIMENT/packages/cv-labs/samples/input.jpg",
+  "sobel_distinct_levels": 250,
+  "canny_distinct_levels": 2,
+  "sobel_percent_above_10pct_of_max": 21.33941650390625,
+  "canny_percent_edge_pixels": 6.15997314453125,
+  "canny_threshold_sweep": {
+    "30-90": 10.58349609375,
+    "100-200": 6.15997314453125,
+    "200-300": 3.8028717041015625
+  }
+}

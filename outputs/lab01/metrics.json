@@ -1,0 +1,69 @@
+{
+  "image": "/Users/admin/Developer/school/CSST106-LAB-EXPERIMENT/packages/cv-labs/samples/input.jpg",
+  "color": {
+    "shape": [
+      512,
+      512,
+      3
+    ],
+    "height": 512,
+    "width": 512,
+    "channels": 3,
+    "dtype": "uint8",
+    "total_pixels": 262144,
+    "min_intensity": 0,
+    "max_intensity": 255
+  },
+  "grayscale": {
+    "shape": [
+      512,
+      512
+    ],
+    "height": 512,
+    "width": 512,
+    "channels": 1,
+    "dtype": "uint8",
+    "total_pixels": 262144,
+    "min_intensity": 0,
+    "max_intensity": 255
+  },
+  "pixel": {
+    "y": 256,
+    "x": 256,
+    "bgr_before": [
+      11,
+      14,
+      19
+    ],
+    "bgr_after": [
+      0,
+      0,
+      255
+    ],
+    "gray_value": [
+      15
+    ]
+  },
+  "sizes": {
+    "crop": [
+      256,
+      256,
+      3
+    ],
+    "small": [
+      256,
+      256,
+      3
+    ],
+    "large": [
+      768,
+      768,
+      3
+    ],
+    "rotated": [
+      512,
+      512,
+      3
+    ]
+  }
+}

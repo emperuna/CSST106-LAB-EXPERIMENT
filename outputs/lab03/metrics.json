@@ -1,0 +1,76 @@
+{
+  "image": "/Users/admin/Developer/school/CSST106-LAB-EXPERIMENT/packages/cv-labs/samples/low_contrast.png",
+  "color_image": "/Users/admin/Developer/school/CSST106-LAB-EXPERIMENT/packages/cv-labs/samples/coffee.jpg",
+  "versions": {
+    "original": {
+      "mean": 112.16957092285156,
+      "std_contrast": 13.330291211858185,
+      "min": 0,
+      "max": 255,
+      "entropy_bits": 4.8849890150813255,
+      "flat_region_noise": 0.927024781703949
+    },
+    "stretched": {
+      "mean": 171.5191650390625,
+      "std_contrast": 42.27173519126207,
+      "min": 0,
+      "max": 255,
+      "entropy_bits": 4.663058613786927,
+      "flat_region_noise": 4.635124206542969
+    },
+    "global": {
+      "mean": 133.75897216796875,
+      "std_contrast": 74.01398487679202,
+      "min": 0,
+      "max": 255,
+      "entropy_bits": 4.7189942253481805,
+      "flat_region_noise": 15.89688491821289
+    },
+    "clahe": {
+      "mean": 119.93634033203125,
+      "std_contrast": 18.531544329921612,
+      "min": 1,
+      "max": 255,
+      "entropy_bits": 5.8264760189825395,
+      "flat_region_noise": 2.669612407684326
+    }
+  },
+  "manual_vs_opencv": {
+    "max_difference": 0,
+    "identical_pixels_percent": 100.0
+  },
+  "clahe_clip_sweep": {
+    "1.0": {
+      "mean": 117.77134704589844,
+      "std_contrast": 15.424973140295148,
+      "min": 1,
+      "max": 255,
+      "entropy_bits": 5.353879863718287,
+      "flat_region_noise": 1.744515061378479
+    },
+    "2.0": {
+      "mean": 119.93634033203125,
+      "std_contrast": 18.531544329921612,
+      "min": 1,
+      "max": 255,
+      "entropy_bits": 5.8264760189825395,
+      "flat_region_noise": 2.669612407684326
+    },
+    "4.0": {
+      "mean": 122.8522834777832,
+      "std_contrast": 23.680803301330393,
+      "min": 1,
+      "max": 255,
+      "entropy_bits": 6.369838449420669,
+      "flat_region_noise": 4.3393330574035645
+    },
+    "8.0": {
+      "mean": 126.66168975830078,
+      "std_contrast": 32.01177026633576,
+      "min": 1,
+      "max": 255,
+      "entropy_bits": 6.9579314168781226,
+      "flat_region_noise": 7.592526912689209
+    }
+  }
+}

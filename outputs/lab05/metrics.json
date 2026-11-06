@@ -1,0 +1,95 @@
+{
+  "dataset": {
+    "n_samples": 1288,
+    "n_features": 1850,
+    "image_size": [
+      50,
+      37
+    ],
+    "n_classes": 7,
+    "names": [
+      "Ariel Sharon",
+      "Colin Powell",
+      "Donald Rumsfeld",
+      "George W Bush",
+      "Gerhard Schroeder",
+      "Hugo Chavez",
+      "Tony Blair"
+    ],
+    "train": 1030,
+    "test": 258
+  },
+  "pca": {
+    "n_components": 150,
+    "fit_seconds": 0.25202916899979755,
+    "variance_retained": 0.9456142783164978,
+    "components_for_90_percent": 85,
+    "first_three_component_variance": [
+      0.20737464725971222,
+      0.1411111056804657,
+      0.0666981041431427
+    ]
+  },
+  "svm_baseline": {
+    "fit_seconds": 0.34427114999925834,
+    "accuracy": 0.8488372093023255,
+    "macro_f1": 0.7995750302682888
+  },
+  "svm_without_whitening": {
+    "accuracy": 0.7945736434108527,
+    "macro_f1": 0.7383679195843634
+  },
+  "whitening_effect": {
+    "whitened_std_first_last": [
+      0.9995155334472656,
+      0.9995138645172119
+    ],
+    "plain_std_first_last": [
+      2.9115891456604004,
+      0.13292638957500458
+    ]
+  },
+  "svm_tuned": {
+    "best_params": {
+      "C": 1,
+      "gamma": 0.005
+    },
+    "cv_macro_f1": 0.7845728710025607,
+    "accuracy": 0.8682170542635659,
+    "macro_f1": 0.824862037219418
+  },
+  "failure_analysis": {
+    "test_images": 258,
+    "incorrect": 34,
+    "reconstruction_error": {
+      "correct_mean": 0.0017293163109570742,
+      "incorrect_mean": 0.002948092296719551
+    },
+    "left_right_asymmetry": {
+      "correct_mean": 0.0801783949136734,
+      "incorrect_mean": 0.07946011424064636
+    },
+    "mean_brightness": {
+      "correct_mean": 0.5103081464767456,
+      "incorrect_mean": 0.49986833333969116
+    },
+    "errors_by_true_person": {
+      "Ariel Sharon": 3,
+      "Colin Powell": 3,
+      "Donald Rumsfeld": 6,
+      "George W Bush": 10,
+      "Gerhard Schroeder": 1,
+      "Hugo Chavez": 5,
+      "Tony Blair": 6
+    },
+    "photos_by_true_person_in_test": {
+      "Ariel Sharon": 11,
+      "Colin Powell": 47,
+      "Donald Rumsfeld": 22,
+      "George W Bush": 119,
+      "Gerhard Schroeder": 19,
+      "Hugo Chavez": 13,
+      "Tony Blair": 27
+    }
+  }
+}
