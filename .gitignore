@@ -1,0 +1,48 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Node and Astro
+node_modules/
+dist/
+.astro/
+*.tsbuildinfo
+*.log
+
+# Downloaded datasets and weights, and training runs: the lab scripts rebuild these
+/data/
+/models/
+/runs/
+
+# Lab 6 results that are large or easy to regenerate. The saved plots, JSON files
+# and test_examples.png stay in Git because the Web UI and the report use them.
+/outputs/lab06/demo_*.mp4
+/outputs/lab06/test_*.jpg
+/outputs/lab06/training_log.txt
+
+# Design tool output
+.taste-skill/
+tiles/
+shots/
+
+# Personal settings and tool state
+.claude/
+skills-lock.json
+.vscode/
+.idea/
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Operating system
+.DS_Store
+Thumbs.db

@@ -1,0 +1,9 @@
+.venv/
+data/
+models/
+outputs/
+runs/
+uv.lock
+pnpm-lock.yaml
+packages/api-client/openapi.json
+packages/api-client/src/schema.d.ts
