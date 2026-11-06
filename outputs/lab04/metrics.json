@@ -1,0 +1,90 @@
+{
+  "image": "/Users/admin/Developer/school/CSST106-LAB-EXPERIMENT/packages/cv-labs/samples/camera.png",
+  "second_image": "image 1 rotated 30 degrees, scaled 0.8",
+  "hessian_threshold": 400,
+  "comparison": {
+    "SURF": {
+      "backend": "numpy (cv_labs/surf.py)",
+      "keypoints_image1": 600,
+      "keypoints_image2": 503,
+      "descriptor_length": 64,
+      "descriptor_type": "float",
+      "time_ms_image1": 1338.2772040004056,
+      "ms_per_keypoint": 2.230462006667343,
+      "ratio_test_matches": 127,
+      "ransac_inliers": 73,
+      "correct_matches": 98,
+      "correct_percent": 77.16535433070867
+    },
+    "U-SURF": {
+      "backend": "numpy (cv_labs/surf.py)",
+      "keypoints_image1": 600,
+      "keypoints_image2": 503,
+      "descriptor_length": 64,
+      "descriptor_type": "float",
+      "time_ms_image1": 1209.5929560000513,
+      "ms_per_keypoint": 2.0159882600000856,
+      "ratio_test_matches": 32,
+      "ransac_inliers": 11,
+      "correct_matches": 2,
+      "correct_percent": 6.25
+    },
+    "SIFT": {
+      "backend": "opencv",
+      "keypoints_image1": 791,
+      "keypoints_image2": 627,
+      "descriptor_length": 128,
+      "descriptor_type": "float",
+      "time_ms_image1": 166.8412589988293,
+      "ms_per_keypoint": 0.21092447408195864,
+      "ratio_test_matches": 344,
+      "ransac_inliers": 334,
+      "correct_matches": 334,
+      "correct_percent": 97.09302325581395
+    },
+    "ORB": {
+      "backend": "opencv",
+      "keypoints_image1": 1973,
+      "keypoints_image2": 1960,
+      "descriptor_length": 32,
+      "descriptor_type": "binary",
+      "time_ms_image1": 267.8839939999307,
+      "ms_per_keypoint": 0.13577495894573274,
+      "ratio_test_matches": 958,
+      "ransac_inliers": 751,
+      "correct_matches": 914,
+      "correct_percent": 95.4070981210856
+    }
+  },
+  "keypoints_by_threshold": {
+    "100": 1262,
+    "200": 896,
+    "400": 600,
+    "800": 381,
+    "1600": 224,
+    "3200": 136
+  },
+  "correct_matches_by_rotation": {
+    "SURF": {
+      "0": 600,
+      "5": 309,
+      "10": 225,
+      "15": 190,
+      "30": 131,
+      "45": 110,
+      "90": 345,
+      "180": 302
+    },
+    "U-SURF": {
+      "0": 600,
+      "5": 307,
+      "10": 199,
+      "15": 109,
+      "30": 4,
+      "45": 0,
+      "90": 0,
+      "180": 0
+    }
+  },
+  "timing_note": "The NumPy SURF is pure Python array code; SIFT and ORB are compiled C++. Their times show this implementation difference, not the algorithms' relative speed."
+}

@@ -1,0 +1,136 @@
+{
+  "cells_with_ground_truth": {
+    "image": "/Users/admin/Developer/school/CSST106-LAB-EXPERIMENT/packages/cv-labs/samples/cells.png",
+    "methods": {
+      "Otsu threshold": {
+        "time_ms": 0.9533259999443544,
+        "objects_found": 5,
+        "iou": 0.9776543721508496,
+        "dice": 0.9887009438232385,
+        "pixel_accuracy": 0.991575
+      },
+      "Adaptive threshold": {
+        "time_ms": 12.66058900000644,
+        "objects_found": 5,
+        "iou": 0.993333893040047,
+        "dice": 0.9966558001229857,
+        "pixel_accuracy": 0.99751875
+      },
+      "Region growing": {
+        "time_ms": 326.3825270005327,
+        "objects_found": 4,
+        "iou": 0.9864381745245808,
+        "dice": 0.9931727925644276,
+        "pixel_accuracy": 0.99495
+      },
+      "Watershed": {
+        "time_ms": 63.03805000061402,
+        "objects_found": 8,
+        "iou": 0.993333893040047,
+        "dice": 0.9966558001229857,
+        "pixel_accuracy": 0.99751875
+      },
+      "Edge + contours": {
+        "time_ms": 2.1068580008432036,
+        "objects_found": 4,
+        "iou": 0.9793997630643675,
+        "dice": 0.989592684954281,
+        "pixel_accuracy": 0.992175
+      }
+    },
+    "otsu_threshold": 124.0,
+    "seeds": 8,
+    "edge_vs_watershed_border_px": 0.34299986036020685,
+    "edge_vs_region_growing_border_px": 0.4276079340368671,
+    "true_objects": 8
+  },
+  "noise_iou": {
+    "0": {
+      "Otsu threshold": 0.9776543721508496,
+      "Adaptive threshold": 0.993333893040047,
+      "Region growing": 0.9864381745245808,
+      "Watershed": 0.993333893040047,
+      "Edge + contours": 0.9793997630643675
+    },
+    "10": {
+      "Otsu threshold": 0.9733412517734007,
+      "Adaptive threshold": 0.9927836608656251,
+      "Region growing": 0.9861043516203198,
+      "Watershed": 0.9928169841403037,
+      "Edge + contours": 0.978996365071794
+    },
+    "20": {
+      "Otsu threshold": 0.9533804433951586,
+      "Adaptive threshold": 0.9890349041600401,
+      "Region growing": 0.9847186110878134,
+      "Watershed": 0.9906103286384976,
+      "Edge + contours": 0.9781433337167836
+    },
+    "40": {
+      "Otsu threshold": 0.8901198829966203,
+      "Adaptive threshold": 0.9660306660750382,
+      "Region growing": 0.9755623344842613,
+      "Watershed": 0.9841285786037167,
+      "Edge + contours": 0.4096925395940449
+    }
+  },
+  "coins": {
+    "image": "/Users/admin/Developer/school/CSST106-LAB-EXPERIMENT/packages/cv-labs/samples/coins.png",
+    "methods": {
+      "Otsu threshold": {
+        "time_ms": 0.22393700055545196,
+        "objects_found": 23
+      },
+      "Adaptive threshold": {
+        "time_ms": 3.3375179991708137,
+        "objects_found": 26
+      },
+      "Region growing": {
+        "time_ms": 200.7979529989825,
+        "objects_found": 24
+      },
+      "Watershed": {
+        "time_ms": 40.30302799947094,
+        "objects_found": 25
+      },
+      "Edge + contours": {
+        "time_ms": 2.19496300087485,
+        "objects_found": 24
+      }
+    },
+    "otsu_threshold": 104.0,
+    "seeds": 25,
+    "edge_vs_watershed_border_px": 0.2927081881556557,
+    "edge_vs_region_growing_border_px": 0.41109025036172997,
+    "coins_counted_by_eye": 24
+  },
+  "page": {
+    "otsu_threshold": 168.0
+  },
+  "semantic": {
+    "bus.jpg": {
+      "seconds": 0.8717107869997562,
+      "percent_of_pixels": {
+        "__background__": 55.6324874256973,
+        "bus": 32.530406950160035,
+        "person": 11.837105624142662
+      }
+    },
+    "zidane.jpg": {
+      "seconds": 1.133469246000459,
+      "percent_of_pixels": {
+        "__background__": 55.91048177083333,
+        "person": 44.08951822916667
+      }
+    },
+    "input.jpg": {
+      "seconds": 0.5864834870008053,
+      "percent_of_pixels": {
+        "__background__": 52.79808044433594,
+        "bottle": 0.78887939453125,
+        "person": 46.41304016113281
+      }
+    }
+  },
+  "semantic_model": "DeepLabV3 MobileNetV3-Large, COCO_WITH_VOC_LABELS_V1"
+}
