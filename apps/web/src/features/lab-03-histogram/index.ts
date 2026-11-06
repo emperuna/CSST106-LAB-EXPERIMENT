@@ -1,0 +1,1 @@
+export { HistogramLab } from "./HistogramLab";

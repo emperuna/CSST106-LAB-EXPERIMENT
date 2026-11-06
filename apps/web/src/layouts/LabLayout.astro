@@ -1,0 +1,64 @@
+---
+import { getEntry, render } from "astro:content";
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+  lab: number;
+}
+
+const entry = await getEntry("labs", String(Astro.props.lab));
+if (!entry) throw new Error(`Missing content for Lab ${Astro.props.lab}`);
+const { Content } = await render(entry);
+const { number, title, week, objective, summary } = entry.data;
+---
+
+<BaseLayout title={`Lab ${number}: ${title} | CSST106`} description={summary}>
+  <header class="lab-header">
+    <p class="eyebrow">Laboratory Activity {number} · {week}</p>
+    <h1>{title}</h1>
+    <p class="objective">{objective}</p>
+  </header>
+  <section aria-label="Try it">
+    <slot />
+  </section>
+  <article class="lab-notes">
+    <Content />
+  </article>
+</BaseLayout>
+
+<style>
+  .lab-header {
+    max-width: 48rem;
+    margin-bottom: var(--space-6);
+  }
+  .eyebrow {
+    margin: 0 0 var(--space-1);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+  h1 {
+    margin: 0 0 var(--space-2);
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    line-height: 1.2;
+  }
+  .objective {
+    margin: 0;
+  }
+  .lab-notes {
+    max-width: 48rem;
+    margin-top: var(--space-12);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+  }
+  .lab-notes :global(h2) {
+    margin: var(--space-6) 0 var(--space-2);
+    font-size: var(--text-lg);
+  }
+  .lab-notes :global(h2:first-child) {
+    margin-top: 0;
+  }
+  .lab-notes :global(li) {
+    margin-bottom: var(--space-1);
+  }
+</style>

@@ -1,0 +1,28 @@
+{
+  "name": "@csst106/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "typecheck": "astro sync && tsc --noEmit"
+  },
+  "dependencies": {
+    "@astrojs/react": "^7.1.4",
+    "@csst106/api-client": "workspace:*",
+    "@csst106/tokens": "workspace:*",
+    "@csst106/ui": "workspace:*",
+    "@tanstack/react-query": "^5",
+    "astro": "^7.4.7",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@csst106/config": "workspace:^",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^5"
+  }
+}
