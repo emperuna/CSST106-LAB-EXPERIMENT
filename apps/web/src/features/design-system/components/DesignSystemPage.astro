@@ -1,0 +1,229 @@
+---
+/*
+ * The Reticle design system page: a top bar, a numbered index, and one spec sheet per section.
+ * Token values are read from tokens.css itself, so the page always matches what the site uses.
+ */
+import tokensCss from "@csst106/tokens/tokens.css?raw";
+import appIcon from "@csst106/tokens/brand/reticle-app-icon.svg?url";
+import logo from "@csst106/tokens/brand/reticle-logo-dark.svg?url";
+import mark from "@csst106/tokens/brand/reticle-mark-dark.svg?url";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpen,
+  ChevronDown,
+  CircleAlert,
+  Pause,
+  Play,
+  Upload,
+  X,
+} from "@reticle/ui";
+import { colorGroups, motion, radii, sections, spaceScale, typeScale } from "../data/sections";
+import { parseTokens, pick } from "../utils/tokens";
+import { ControlsSpec } from "./ControlsSpec";
+import { FeedbackSpec } from "./FeedbackSpec";
+import { ResultsSpec } from "./ResultsSpec";
+import SpecHead from "./SpecHead.astro";
+import "../styles/design-system.css";
+
+const tokens = parseTokens(tokensCss);
+const pad = (value: number) => String(value).padStart(2, "0");
+const numbered = sections.map((section, index) => ({ ...section, number: pad(index + 1) }));
+const section = Object.fromEntries(numbered.map((item) => [item.id, item]));
+const icons = { Play, Pause, ArrowLeft, ArrowRight, BookOpen, ChevronDown, Upload, X, CircleAlert };
+const fonts = [
+  { name: "Display", family: "Geist Serif 400", token: "--font-display", sample: "Edge Detection", className: "ds-font-display" },
+  { name: "Body", family: "Geist Sans", token: "--font-sans", sample: "Every image becomes numbers, and every number says what it measured.", className: "ds-font-sans" },
+  { name: "Readings", family: "DM Mono", token: "--font-mono", sample: "512 x 512 · uint8 · 21.34 %", className: "ds-font-mono" },
+];
+---
+
+<div class="ds">
+  <header class="ds-bar">
+    <a class="ds-home" href="/" aria-label="Reticle, home"><img src={mark} alt="" width="24" height="24" /></a>
+    <p class="ds-bar-title"><strong>Reticle</strong> <span>Design system</span></p>
+    <p class="ds-bar-note">One theme · dark</p>
+  </header>
+
+  <div class="ds-body">
+    <nav class="ds-index" aria-label="Sections">
+      <ol>
+        {
+          numbered.map((item) => (
+            <li>
+              <a href={`#${item.id}`}>
+                <span>{item.number}</span>
+                {item.title}
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+
+    <main id="content" class="ds-main">
+      <header class="ds-intro">
+        <h1>Reticle</h1>
+        <p>
+          The design system behind this site: a flat measuring instrument in graphite and teal. Every
+          token and shared component in one place, with values read from the source.
+        </p>
+      </header>
+
+      <section class="ds-section" id="brand" aria-labelledby="brand-title">
+        <SpecHead {...section.brand} />
+        <div class="ds-brand">
+          <figure class="ds-well ds-brand-logo">
+            <img src={logo} alt="Reticle logo" />
+            <figcaption class="ds-label">Logo · reticle-logo-dark.svg</figcaption>
+          </figure>
+          <figure class="ds-well">
+            <img src={mark} alt="Reticle mark" width="96" height="96" />
+            <figcaption class="ds-label">Mark</figcaption>
+          </figure>
+          <figure class="ds-well ds-brand-icons">
+            <div>
+              {[64, 32, 16].map((size) => (
+                <span>
+                  <img src={appIcon} alt={size === 64 ? "Reticle app icon" : ""} width={size} height={size} />
+                  <small>{size}</small>
+                </span>
+              ))}
+            </div>
+            <figcaption class="ds-label">App icon · below 24 px</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="ds-section" id="color" aria-labelledby="color-title">
+        <SpecHead {...section.color} />
+        {
+          colorGroups.map((group) => (
+            <div class="ds-group">
+              <h3 class="ds-label">{group.title}</h3>
+              <ul class="ds-swatches">
+                {pick(tokens, group.tokens).map((token) => (
+                  <li>
+                    <span class="ds-chip" style={`background: var(${token.name})`} />
+                    <code>{token.name}</code>
+                    <span class="ds-value">{token.value}</span>
+                    {token.note && <span class="ds-note">{token.note}</span>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </section>
+
+      <section class="ds-section" id="type" aria-labelledby="type-title">
+        <SpecHead {...section.type} />
+        <ul class="ds-specimens">
+          {
+            fonts.map((font) => (
+              <li>
+                <div class="ds-meta">
+                  <span class="ds-label">{font.name}</span>
+                  <strong>{font.family}</strong>
+                  <code>{font.token}</code>
+                </div>
+                <p class={font.className}>{font.sample}</p>
+              </li>
+            ))
+          }
+        </ul>
+        <h3 class="ds-label ds-group-title">Scale</h3>
+        <ul class="ds-scale">
+          {
+            pick(tokens, typeScale).map((token) => (
+              <li>
+                <code>{token.name}</code>
+                <span class="ds-value">{token.value}</span>
+                <span class="ds-scale-sample" style={`font-size: var(${token.name})`}>
+                  Aa
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section class="ds-section" id="space" aria-labelledby="space-title">
+        <SpecHead {...section.space} />
+        <ul class="ds-bars">
+          {
+            pick(tokens, spaceScale).map((token) => (
+              <li>
+                <code>{token.name}</code>
+                <span class="ds-value">{token.value}</span>
+                <span class="ds-space-bar" style={`width: var(${token.name})`} />
+              </li>
+            ))
+          }
+        </ul>
+        <h3 class="ds-label ds-group-title">Radius and line</h3>
+        <ul class="ds-radii">
+          {
+            pick(tokens, [...radii, "--hairline"]).map((token) => (
+              <li>
+                <span
+                  class="ds-radius"
+                  style={token.name === "--hairline" ? "border-radius: 0; border-width: var(--hairline)" : `border-radius: var(${token.name})`}
+                />
+                <code>{token.name}</code>
+                <span class="ds-value">{token.value}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section class="ds-section" id="motion" aria-labelledby="motion-title">
+        <SpecHead {...section.motion} />
+        <ul class="ds-swatches ds-motion">
+          {
+            pick(tokens, motion).map((token) => (
+              <li>
+                <span class={`ds-chip ds-motion-demo ds-motion-${token.name.slice(2)}`} aria-hidden="true">
+                  <i />
+                </span>
+                <code>{token.name}</code>
+                <span class="ds-value">{token.value}</span>
+                {token.note && <span class="ds-note">{token.note}</span>}
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section class="ds-section" id="icons" aria-labelledby="icons-title">
+        <SpecHead {...section.icons} />
+        <ul class="ds-icons">
+          {
+            Object.entries(icons).map(([name, Icon]) => (
+              <li>
+                <Icon aria-hidden="true" />
+                <code>{name}</code>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section class="ds-section" id="controls" aria-labelledby="controls-title">
+        <SpecHead {...section.controls} />
+        <ControlsSpec client:load />
+      </section>
+
+      <section class="ds-section" id="feedback" aria-labelledby="feedback-title">
+        <SpecHead {...section.feedback} />
+        <FeedbackSpec client:load />
+      </section>
+
+      <section class="ds-section" id="results" aria-labelledby="results-title">
+        <SpecHead {...section.results} />
+        <ResultsSpec client:load />
+      </section>
+    </main>
+  </div>
+</div>

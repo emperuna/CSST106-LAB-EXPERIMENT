@@ -1,0 +1,18 @@
+---
+/** A spec sheet's header: its number, title, one-line purpose and the source it documents. */
+interface Props {
+  number: string;
+  id: string;
+  title: string;
+  intro: string;
+  source: string;
+}
+const { number, id, title, intro, source } = Astro.props;
+---
+
+<header class="ds-head">
+  <span class="ds-num">{number}</span>
+  <h2 id={`${id}-title`}>{title}</h2>
+  <p>{intro}</p>
+  <code>{source}</code>
+</header>
