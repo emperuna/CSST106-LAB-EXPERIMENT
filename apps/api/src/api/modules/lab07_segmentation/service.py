@@ -5,7 +5,7 @@ from cv_labs import lab07_segmentation as lab
 from cv_labs.common import SAMPLES, load_image, to_gray
 
 from api.core.images import to_data_url
-from api.core.schemas import Chart, LabResult, LegendItem, Panel, Series, Table
+from api.core.schemas import Chart, LabResult, LegendItem, Panel, Readout, Series, Table
 
 
 def classical(image: np.ndarray, use_truth: bool, block: int, c: float, tolerance: float, low: int, high: int,
@@ -21,15 +21,15 @@ def classical(image: np.ndarray, use_truth: bool, block: int, c: float, toleranc
     panels = [
         Panel(title="Original", image=to_data_url(gray), group="Input"),
         Panel(title=f'Otsu (threshold {results["Otsu threshold"]["threshold"]:.0f})',
-              image=to_data_url(lab.outline(gray, results["Otsu threshold"]["mask"])), group="Thresholding"),
+              image=to_data_url(lab.outline(gray, results["Otsu threshold"]["mask"])), group="Thresholding", step=1),
         Panel(title="Adaptive threshold", image=to_data_url(results["Adaptive threshold"]["raw"]),
-              caption="Raw result, before cleanup", group="Thresholding"),
-        Panel(title="Adaptive, cleaned", image=to_data_url(lab.outline(gray, results["Adaptive threshold"]["mask"])), group="Thresholding"),
-        Panel(title="Region growing", image=to_data_url(seeded), caption=f'{len(results["Region growing"]["seeds"])} seeds in red', group="Region-based"),
+              caption="Raw result, before cleanup", group="Thresholding", step=1),
+        Panel(title="Adaptive, cleaned", image=to_data_url(lab.outline(gray, results["Adaptive threshold"]["mask"])), group="Thresholding", step=1),
+        Panel(title="Region growing", image=to_data_url(seeded), caption=f'{len(results["Region growing"]["seeds"])} seeds in red', group="Region-based", step=2),
         Panel(title="Watershed regions", image=to_data_url(lab.label_colors(results["Watershed"]["labels"] - 1)),
-              caption=f'{results["Watershed"]["objects"]} objects separated', group="Region-based"),
-        Panel(title="Canny edges", image=to_data_url(results["Edge + contours"]["edges"]), group="Edge-based"),
-        Panel(title="Filled closed contours", image=to_data_url(lab.outline(gray, results["Edge + contours"]["mask"])), group="Edge-based"),
+              caption=f'{results["Watershed"]["objects"]} objects separated', group="Region-based", step=2),
+        Panel(title="Canny edges", image=to_data_url(results["Edge + contours"]["edges"]), group="Edge-based", step=3),
+        Panel(title="Filled closed contours", image=to_data_url(lab.outline(gray, results["Edge + contours"]["mask"])), group="Edge-based", step=3),
     ]
 
     rows = lab.report_rows(results, truth)
@@ -43,6 +43,11 @@ def classical(image: np.ndarray, use_truth: bool, block: int, c: float, toleranc
             values += [round(row["iou"], 3), round(row["dice"], 3), round(row["pixel_accuracy"], 3)]
         table_rows.append(values)
 
+    readouts = [Readout(label="Otsu threshold", value=round(float(results["Otsu threshold"]["threshold"])), step=1),
+                Readout(label="Watershed objects", value=rows["Watershed"]["objects_found"], step=2),
+                Readout(label="Edge-based objects", value=rows["Edge + contours"]["objects_found"], step=3)]
+    if truth is not None:
+        readouts.append(Readout(label="Watershed IoU", value=round(rows["Watershed"]["iou"], 3), step=5))
     charts, notes = [], []
     if truth is not None:
         noise = lab.noise_sensitivity(gray, truth, settings)
@@ -56,7 +61,7 @@ def classical(image: np.ndarray, use_truth: bool, block: int, c: float, toleranc
               Table(title="Border agreement with edge-based result (average pixels apart)", columns=["Compared with", "Distance"], rows=[
                   [other, round(lab.border_distance(results["Edge + contours"]["mask"], results[other]["mask"]), 2)]
                   for other in ("Watershed", "Region growing")])]
-    return LabResult(panels=panels, tables=tables, charts=charts, notes=notes)
+    return LabResult(panels=panels, tables=tables, charts=charts, notes=notes, readouts=readouts)
 
 
 def semantic(image: np.ndarray) -> LabResult:
@@ -73,8 +78,9 @@ def semantic(image: np.ndarray) -> LabResult:
     shares = sorted(result["percent_of_pixels"].items(), key=lambda item: -item[1])
     return LabResult(
         panels=[Panel(title="Original", image=to_data_url(image), large=True),
-                Panel(title="Class per pixel", image=to_data_url(painted, lossless=True), large=True),
-                Panel(title="Overlay", image=to_data_url(overlay), large=True)],
+                Panel(title="Class per pixel", image=to_data_url(painted, lossless=True), large=True, step=4),
+                Panel(title="Overlay", image=to_data_url(overlay), large=True, step=4)],
+        readouts=[Readout(label=f"{display(name)} pixels", value=round(share, 1), unit="%", step=4) for name, share in shares[:3]],
         legend=legend,
         tables=[Table(title="Share of the image per class", columns=["Class", "Pixels (%)"],
                       rows=[[display(n), round(s, 1)] for n, s in shares])],

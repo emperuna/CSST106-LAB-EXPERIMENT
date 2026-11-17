@@ -11,7 +11,7 @@ from cv_labs.common import OUTPUTS
 from fastapi import HTTPException
 
 from api.core.images import file_to_data_url, to_data_url
-from api.core.schemas import LabResult, Panel, Table, Video
+from api.core.schemas import LabResult, Panel, Readout, Table, Video
 
 MAX_FRAMES = 120
 RESULTS = OUTPUTS / "lab06"
@@ -32,6 +32,8 @@ def detect_image(image: np.ndarray, model_name: str, conf: float, imgsz: int) ->
         panels=[Panel(title="Detections", image=to_data_url(found["annotated"]),
                       caption=f'{len(rows)} objects, {found["inference_ms"]:.0f} ms inference', large=True)],
         tables=[Table(title="Detected objects", columns=["Label", "Confidence", "x1", "y1", "x2", "y2"], rows=rows)],
+        readouts=[Readout(label="Objects found", value=len(rows)),
+                  Readout(label="Inference", value=round(found["inference_ms"]), unit="ms")],
     )
 
 
@@ -93,12 +95,16 @@ def detect_video(data: bytes, model_name: str, conf: float, imgsz: int) -> LabRe
     rows = [["Frames processed", frames], ["Frames reported by the file", total], ["Average inference (ms)", round(inference / frames)],
             ["Inference speed (FPS)", round(1000 * frames / max(inference, 1e-6), 1)]]
     notes = [f"Used every {stride} frames to stay within {MAX_FRAMES} frames."] if stride > 1 else []
+    readouts = [Readout(label="Frames processed", value=frames),
+                Readout(label="Average inference", value=round(inference / frames), unit="ms"),
+                Readout(label="Objects across all frames", value=sum(labels.values()))]
     return LabResult(
         videos=[Video(title="Detections", source=f"data:{mime};base64,{encoded}")],
         tables=[Table(title="Run summary", columns=["Measure", "Value"], rows=rows),
                 Table(title="Detections across all frames", columns=["Label", "Count"],
                       rows=[[label, count] for label, count in sorted(labels.items(), key=lambda item: -item[1])])],
         notes=notes,
+        readouts=readouts,
     )
 
 
@@ -112,10 +118,12 @@ def training_summary() -> LabResult:
     names = dataset["names"]
 
     panels = []
-    for title, name in (("Training curves", "training_results.png"), ("Confusion matrix", "training_confusion_matrix.png"),
-                        ("Precision-recall curve", "training_BoxPR_curve.png"), ("Detections on unseen test images", "test_examples.png")):
+    # Step 4 trains the model; step 5 validates it on unseen images.
+    for title, name, step in (("Training curves", "training_results.png", 4), ("Confusion matrix", "training_confusion_matrix.png", 5),
+                              ("Precision-recall curve", "training_BoxPR_curve.png", 5),
+                              ("Detections on unseen test images", "test_examples.png", 5)):
         if (RESULTS / name).exists():
-            panels.append(Panel(title=title, image=file_to_data_url(RESULTS / name), large=True))
+            panels.append(Panel(title=title, image=file_to_data_url(RESULTS / name), large=True, step=step))
 
     split_rows = [[split, info["images"], *info["objects_per_class"]] for split, info in dataset["splits"].items()]
     class_rows = [[name, *[round(values[k], 3) for k in ("precision", "recall", "mAP50", "mAP50_95")]]
@@ -123,6 +131,8 @@ def training_summary() -> LabResult:
     class_rows.insert(0, ["All classes", *[round(evaluation[k], 3) for k in ("precision", "recall", "mAP50", "mAP50_95")]])
     return LabResult(
         panels=panels,
+        readouts=[Readout(label=f"{label}, all classes", value=round(evaluation[key], 3), step=5)
+                  for key, label in (("mAP50", "mAP50"), ("precision", "Precision"), ("recall", "Recall"))],
         tables=[
             Table(title="Dataset", columns=["Split", "Images", *names], rows=split_rows),
             Table(title=f'Evaluation on the {evaluation["split"]} split', columns=["Class", "Precision", "Recall", "mAP50", "mAP50-95"], rows=class_rows),

@@ -10,6 +10,7 @@ class Panel(BaseModel):
     caption: str | None = None
     group: str | None = None
     large: bool = False  # Show bigger: detail matters, or there are only a few images.
+    step: int | None = None  # The lab sheet's procedure step that produced it.
 
 
 class Table(BaseModel):
@@ -43,6 +44,15 @@ class Video(BaseModel):
     source: str
 
 
+class Readout(BaseModel):
+    """A headline measurement, shown above the results. Taken from the same values as the tables."""
+
+    label: str
+    value: str | int | float
+    unit: str | None = None
+    step: int | None = None
+
+
 class LabResult(BaseModel):
     panels: list[Panel] = Field(default_factory=list)
     tables: list[Table] = Field(default_factory=list)
@@ -50,4 +60,5 @@ class LabResult(BaseModel):
     legend: list[LegendItem] = Field(default_factory=list)
     videos: list[Video] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
+    readouts: list[Readout] = Field(default_factory=list)
     elapsed_ms: float = 0

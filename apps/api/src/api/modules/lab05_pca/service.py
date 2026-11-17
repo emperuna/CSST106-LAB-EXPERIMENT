@@ -14,7 +14,7 @@ from fastapi import HTTPException
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 from api.core.images import to_data_url
-from api.core.schemas import Chart, LabResult, Panel, Series, Table
+from api.core.schemas import Chart, LabResult, Panel, Readout, Series, Table
 
 MODEL_PATH = OUTPUTS / "lab05" / "model.joblib"
 SCALE = 3  # LFW images here are only 37 x 50 pixels, so they are enlarged for display.
@@ -52,13 +52,13 @@ def train(n_components: int, whiten: bool, c: float, gamma: str | float) -> LabR
     clf, svm_seconds = lab.fit_svm(pca.transform(X_train), y_train, C=c, gamma=gamma)
     predicted = clf.predict(pca.transform(X_test))
 
-    panels = [Panel(title=f"Eigenface {i}", image=to_data_url(_face_image(pca.components_[i], h, w)), group="First eigenfaces")
+    panels = [Panel(title=f"Eigenface {i}", image=to_data_url(_face_image(pca.components_[i], h, w)), group="First eigenfaces", step=3)
               for i in range(min(12, n_components))]
-    panels += [Panel(title=f"Eigenface {i}", image=to_data_url(_face_image(pca.components_[i], h, w)), group="Last eigenfaces")
+    panels += [Panel(title=f"Eigenface {i}", image=to_data_url(_face_image(pca.components_[i], h, w)), group="Last eigenfaces", step=3)
                for i in range(max(12, n_components - 3), n_components)]
     wrong = np.flatnonzero(predicted != y_test)
     panels += [Panel(title=f"Predicted {_surname(names[predicted[i]])}", caption=f"True: {_surname(names[y_test[i]])}",
-                     image=to_data_url(_face_image(X_test[i], h, w)), group=f"Wrong predictions (first 12 of {wrong.size})")
+                     image=to_data_url(_face_image(X_test[i], h, w)), group=f"Wrong predictions (first 12 of {wrong.size})", step=6)
                for i in wrong[:12]]
 
     cumulative = pca.explained_variance_ratio_.cumsum()
@@ -67,19 +67,26 @@ def train(n_components: int, whiten: bool, c: float, gamma: str | float) -> LabR
     report_rows = [[name, round(report[name]["precision"], 2), round(report[name]["recall"], 2),
                     round(report[name]["f1-score"], 2), int(report[name]["support"])] for name in names]
     matrix = confusion_matrix(y_test, predicted)
+    accuracy = round(accuracy_score(y_test, predicted) * 100, 1)
+    retained = round(float(cumulative[-1]) * 100, 1)
     summary = [
         ["Images (train / test)", f"{len(X_train)} / {len(X_test)}"],
         ["Pixels per image", data["n_features"]],
         ["People", int(data["n_classes"])],
         ["Components used", n_components],
-        ["Variance retained (%)", round(float(cumulative[-1]) * 100, 1)],
+        ["Variance retained (%)", retained],
         ["Components for 90% of variance", needed if needed > 0 else f"More than {n_components}"],
-        ["Test accuracy (%)", round(accuracy_score(y_test, predicted) * 100, 1)],
+        ["Test accuracy (%)", accuracy],
         ["PCA fit (ms)", round(pca_seconds * 1000)],
         ["SVM fit (ms)", round(svm_seconds * 1000)],
     ]
     return LabResult(
         panels=panels,
+        readouts=[
+            Readout(label="Variance retained", value=retained, unit="%", step=2),
+            Readout(label="Test accuracy", value=accuracy, unit="%", step=4),
+            Readout(label="Components for 90% of variance", value=needed if needed > 0 else f"More than {n_components}", step=5),
+        ],
         charts=[Chart(title="Cumulative explained variance", x_label="Number of components", y_label="Share of variance",
                       series=[Series(label="Cumulative variance", x=list(range(1, n_components + 1)), y=cumulative.tolist())])],
         tables=[

@@ -3,7 +3,7 @@ import numpy as np
 from cv_labs import lab01_images as lab
 
 from api.core.images import to_data_url
-from api.core.schemas import LabResult, Panel, Table
+from api.core.schemas import LabResult, Panel, Readout, Table
 
 
 def run(image: np.ndarray, pixel_x: int | None, pixel_y: int | None, color: tuple[int, int, int],
@@ -28,19 +28,19 @@ def run(image: np.ndarray, pixel_x: int | None, pixel_y: int | None, color: tupl
 
     size = lambda a: f"{a.shape[1]} x {a.shape[0]} px"  # noqa: E731
     panels = [
-        Panel(title="Original", image=to_data_url(image), caption=size(image), group="Color and grayscale"),
-        Panel(title="Grayscale", image=to_data_url(gray), caption="One channel per pixel", group="Color and grayscale"),
-        Panel(title="Blue channel", image=to_data_url(channels["blue"]), caption="Channel 0 in OpenCV", group="BGR channels"),
-        Panel(title="Green channel", image=to_data_url(channels["green"]), caption="Channel 1", group="BGR channels"),
-        Panel(title="Red channel", image=to_data_url(channels["red"]), caption="Channel 2", group="BGR channels"),
+        Panel(title="Original", image=to_data_url(image), caption=size(image), group="Color and grayscale", step=1),
+        Panel(title="Grayscale", image=to_data_url(gray), caption="One channel per pixel", group="Color and grayscale", step=2),
+        Panel(title="Blue channel", image=to_data_url(channels["blue"]), caption="Channel 0 in OpenCV", group="BGR channels", step=2),
+        Panel(title="Green channel", image=to_data_url(channels["green"]), caption="Channel 1", group="BGR channels", step=2),
+        Panel(title="Red channel", image=to_data_url(channels["red"]), caption="Channel 2", group="BGR channels", step=2),
         Panel(title="Pixel before", image=to_data_url(lab.zoom_around(image, y, x), lossless=True),
-              caption=f"Area around ({x}, {y}), enlarged 15x", group="Changing one pixel"),
+              caption=f"Area around ({x}, {y}), enlarged 15x", group="Changing one pixel", step=3),
         Panel(title="Pixel after", image=to_data_url(lab.zoom_around(changed, y, x), lossless=True),
-              caption=f"BGR value is now {list(color)}", group="Changing one pixel"),
-        Panel(title="Cropped region", image=to_data_url(roi), caption=size(roi), group="Basic operations"),
-        Panel(title=f"Resized {scale:g}x", image=to_data_url(resized), caption=size(resized), group="Basic operations"),
+              caption=f"BGR value is now {list(color)}", group="Changing one pixel", step=3),
+        Panel(title="Cropped region", image=to_data_url(roi), caption=size(roi), group="Basic operations", step=4),
+        Panel(title=f"Resized {scale:g}x", image=to_data_url(resized), caption=size(resized), group="Basic operations", step=5),
         Panel(title="Rotated 90 degrees " + ("clockwise" if clockwise else "counterclockwise"),
-              image=to_data_url(rotated), caption=size(rotated), group="Basic operations"),
+              image=to_data_url(rotated), caption=size(rotated), group="Basic operations", step=5),
     ]
     info, gray_info = lab.describe(image), lab.describe(gray)
     rows = [
@@ -58,7 +58,12 @@ def run(image: np.ndarray, pixel_x: int | None, pixel_y: int | None, color: tupl
         ["BGR after", str(lab.get_pixel(changed, y, x))],
         ["Grayscale value", lab.get_pixel(gray, y, x)[0]],
     ]
-    return LabResult(panels=panels, tables=[
+    readouts = [
+        Readout(label="img.shape", value=str(info["shape"]), step=1),
+        Readout(label=f"BGR at ({x}, {y}) before", value=str(lab.get_pixel(image, y, x)), step=3),
+        Readout(label="Cropped region", value=size(roi), step=4),
+    ]
+    return LabResult(panels=panels, readouts=readouts, tables=[
         Table(title="Image properties", columns=["Property", "Color", "Grayscale"], rows=rows),
         Table(title="Pixel inspection", columns=["Item", "Value"], rows=pixel_rows),
     ])

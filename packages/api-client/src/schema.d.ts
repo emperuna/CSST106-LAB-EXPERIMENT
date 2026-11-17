@@ -535,6 +535,8 @@ export interface components {
             videos?: components["schemas"]["Video"][];
             /** Notes */
             notes?: string[];
+            /** Readouts */
+            readouts?: components["schemas"]["Readout"][];
             /**
              * Elapsed Ms
              * @default 0
@@ -566,6 +568,22 @@ export interface components {
              * @default false
              */
             large: boolean;
+            /** Step */
+            step?: number | null;
+        };
+        /**
+         * Readout
+         * @description A headline measurement, shown above the results. Taken from the same values as the tables.
+         */
+        Readout: {
+            /** Label */
+            label: string;
+            /** Value */
+            value: string | number;
+            /** Unit */
+            unit?: string | null;
+            /** Step */
+            step?: number | null;
         };
         /** Sample */
         Sample: {
