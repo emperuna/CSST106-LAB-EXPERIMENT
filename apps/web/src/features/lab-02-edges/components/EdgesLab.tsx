@@ -1,5 +1,5 @@
 import { LabProvider, useSamples, type ImageChoice } from "@csst106/api-client";
-import { ImageSource, RangeField, SelectField, useRunOnce, Workbench } from "@reticle/ui";
+import { ImageSource, RangeField, SelectField, Step, useRunOnce, Workbench } from "@reticle/ui";
 import { useState } from "react";
 import { useEdgesRun } from "../hooks/useEdgesRun";
 import { kernelSizes } from "../utils/kernelSizes";
@@ -23,36 +23,44 @@ function Lab() {
       result={run.data}
       controls={
         <>
-          <ImageSource samples={samples} value={image} onChange={setImage} />
-          <SelectField
-            label="Gaussian blur"
-            value={blur}
-            options={kernelSizes([1, 3, 5, 7, 9])}
-            onChange={setBlur}
-            hint="1 x 1 means no blur."
-          />
-          <SelectField
-            label="Sobel kernel"
-            value={sobelSize}
-            options={kernelSizes([3, 5, 7])}
-            onChange={setSobelSize}
-          />
-          <RangeField
-            label="Canny low threshold"
-            value={low}
-            min={0}
-            max={500}
-            step={5}
-            onChange={setLow}
-          />
-          <RangeField
-            label="Canny high threshold"
-            value={high}
-            min={0}
-            max={500}
-            step={5}
-            onChange={setHigh}
-          />
+          <Step number={1} title="Convert to grayscale" code="cv2.cvtColor">
+            <ImageSource samples={samples} value={image} onChange={setImage} />
+          </Step>
+          <Step number={2} title="Gaussian blur" code="cv2.GaussianBlur">
+            <SelectField
+              label="Kernel size"
+              value={blur}
+              options={kernelSizes([1, 3, 5, 7, 9])}
+              onChange={setBlur}
+              hint="1 x 1 means no blur."
+            />
+          </Step>
+          <Step number={3} title="Sobel gradients" code="cv2.Sobel · cv2.magnitude">
+            <SelectField
+              label="Kernel size"
+              value={sobelSize}
+              options={kernelSizes([3, 5, 7])}
+              onChange={setSobelSize}
+            />
+          </Step>
+          <Step number={4} title="Canny" code="cv2.Canny">
+            <RangeField
+              label="Low threshold"
+              value={low}
+              min={0}
+              max={500}
+              step={5}
+              onChange={setLow}
+            />
+            <RangeField
+              label="High threshold"
+              value={high}
+              min={0}
+              max={500}
+              step={5}
+              onChange={setHigh}
+            />
+          </Step>
         </>
       }
     />

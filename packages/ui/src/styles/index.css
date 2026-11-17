@@ -11,6 +11,7 @@
 @import "./segmented.css";
 @import "../components/status-badge/status-badge.css";
 @import "../components/workbench/workbench.css";
+@import "../components/step/step.css";
 @import "../components/error-message/error-message.css";
 @import "../components/loader/loader.css";
 @import "../components/image-source/image-source.css";

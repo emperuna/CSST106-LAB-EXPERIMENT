@@ -1148,6 +1148,13 @@
             "type": "array",
             "title": "Notes"
           },
+          "readouts": {
+            "items": {
+              "$ref": "#/components/schemas/Readout"
+            },
+            "type": "array",
+            "title": "Readouts"
+          },
           "elapsed_ms": {
             "type": "number",
             "title": "Elapsed Ms",
@@ -1211,6 +1218,17 @@
             "type": "boolean",
             "title": "Large",
             "default": false
+          },
+          "step": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step"
           }
         },
         "type": "object",
@@ -1220,6 +1238,57 @@
         ],
         "title": "Panel",
         "description": "One result image, sent inline as a data URL."
+      },
+      "Readout": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "title": "Value"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "step": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "value"
+        ],
+        "title": "Readout",
+        "description": "A headline measurement, shown above the results. Taken from the same values as the tables."
       },
       "Sample": {
         "properties": {

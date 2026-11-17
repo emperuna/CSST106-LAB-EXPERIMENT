@@ -10,12 +10,15 @@ import {
   RangeField,
   ResultView,
   SelectField,
+  Step,
   StatusBadge,
   Tabs,
   type ImageValue,
   type ResultData,
   ErrorMessage,
+  ArrowLeft,
   ArrowRight,
+  BookOpen,
   ChevronDown,
   CircleAlert,
   Pause,
@@ -35,8 +38,18 @@ const USURF = [600, 307, 199, 109, 4, 0, 0, 0];
 const RESULT: ResultData = {
   notes: ["Values on this page come from the saved Lab 2 and Lab 4 results."],
   panels: [
-    { title: "Original", image: ORIGINAL, caption: "512 x 512 px", group: "Image frames" },
-    { title: "Canny", image: CANNY, caption: "Thresholds 100 and 200", group: "Image frames" },
+    { title: "Original", image: ORIGINAL, caption: "512 x 512 px", group: "Image frames", step: 1 },
+    {
+      title: "Canny",
+      image: CANNY,
+      caption: "Thresholds 100 and 200",
+      group: "Image frames",
+      step: 4,
+    },
+  ],
+  readouts: [
+    { label: "SURF keypoints", value: 600, step: 2 },
+    { label: "SURF correct matches", value: 77.2, unit: "%", step: 4 },
   ],
   charts: [
     {
@@ -80,7 +93,9 @@ const RESULT: ResultData = {
 const ICONS = [
   ["Play", Play],
   ["Pause", Pause],
+  ["ArrowLeft", ArrowLeft],
   ["ArrowRight", ArrowRight],
+  ["BookOpen", BookOpen],
   ["ChevronDown", ChevronDown],
   ["Upload", Upload],
   ["X", X],
@@ -150,38 +165,42 @@ export function Showcase() {
               value={image}
               onChange={setImage}
             />
-            <RangeField
-              label="Canny low threshold"
-              value={low}
-              min={0}
-              max={500}
-              step={5}
-              hint="Weak edges survive only when connected to a strong one."
-              onChange={setLow}
-            />
-            <RangeField
-              label="Disabled slider"
-              value={200}
-              min={0}
-              max={500}
-              disabled
-              onChange={() => undefined}
-            />
-            <SelectField
-              label="Gaussian blur"
-              value={blur}
-              options={[1, 3, 5].map((value) => ({ value, label: `${value} x ${value}` }))}
-              onChange={setBlur}
-            />
-            <NumberField label="Pixel x" value={pixel} min={0} onChange={setPixel} />
-            <ColorField label="New pixel color" value={color} onChange={setColor} />
-            <CheckField
-              label="Whiten"
-              checked={checked}
-              hint="The lab sheet turns this on."
-              onChange={setChecked}
-            />
-            <FileField label="Second image" accept="image/*" file={file} onChange={setFile} />
+            <Step number={4} title="Canny" code="cv2.Canny">
+              <RangeField
+                label="Low threshold"
+                value={low}
+                min={0}
+                max={500}
+                step={5}
+                hint="Weak edges survive only when connected to a strong one."
+                onChange={setLow}
+              />
+            </Step>
+            <Step title="Other fields">
+              <RangeField
+                label="Disabled slider"
+                value={200}
+                min={0}
+                max={500}
+                disabled
+                onChange={() => undefined}
+              />
+              <SelectField
+                label="Gaussian blur"
+                value={blur}
+                options={[1, 3, 5].map((value) => ({ value, label: `${value} x ${value}` }))}
+                onChange={setBlur}
+              />
+              <NumberField label="Pixel x" value={pixel} min={0} onChange={setPixel} />
+              <ColorField label="New pixel color" value={color} onChange={setColor} />
+              <CheckField
+                label="Whiten"
+                checked={checked}
+                hint="The lab sheet turns this on."
+                onChange={setChecked}
+              />
+              <FileField label="Second image" accept="image/*" file={file} onChange={setFile} />
+            </Step>
           </div>
         </Section>
         <div className="ds-stack">

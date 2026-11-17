@@ -5,6 +5,7 @@ import {
   NumberField,
   RangeField,
   SelectField,
+  Step,
   useRunOnce,
   Workbench,
 } from "@reticle/ui";
@@ -47,62 +48,70 @@ function Lab() {
       result={run.data}
       controls={
         <>
-          <ImageSource samples={samples} value={image} onChange={setImage} />
-          <div className="field-row">
-            <NumberField label="Pixel x" value={x} min={0} placeholder="Center" onChange={setX} />
-            <NumberField label="Pixel y" value={y} min={0} placeholder="Center" onChange={setY} />
-          </div>
-          <ColorField label="New pixel color" value={color} onChange={setColor} />
-          <RangeField
-            label="Crop left"
-            value={left}
-            min={0}
-            max={100}
-            format={percent}
-            onChange={setLeft}
-          />
-          <RangeField
-            label="Crop right"
-            value={right}
-            min={0}
-            max={100}
-            format={percent}
-            onChange={setRight}
-          />
-          <RangeField
-            label="Crop top"
-            value={top}
-            min={0}
-            max={100}
-            format={percent}
-            onChange={setTop}
-          />
-          <RangeField
-            label="Crop bottom"
-            value={bottom}
-            min={0}
-            max={100}
-            format={percent}
-            onChange={setBottom}
-          />
-          <RangeField
-            label="Resize"
-            value={scale}
-            min={0.1}
-            max={3}
-            step={0.1}
-            format={times}
-            onChange={setScale}
-          />
-          <SelectField
-            label="Rotate 90 degrees"
-            value={direction}
-            options={[
-              { value: "cw", label: "Clockwise" },
-              { value: "ccw", label: "Counterclockwise" },
-            ]}
-            onChange={setDirection}
-          />
+          <Step number={1} title="Load the image">
+            <ImageSource samples={samples} value={image} onChange={setImage} />
+          </Step>
+          <Step number={3} title="Read and change a pixel" code="image[y, x]">
+            <div className="field-row">
+              <NumberField label="Pixel x" value={x} min={0} placeholder="Center" onChange={setX} />
+              <NumberField label="Pixel y" value={y} min={0} placeholder="Center" onChange={setY} />
+            </div>
+            <ColorField label="New pixel color" value={color} onChange={setColor} />
+          </Step>
+          <Step number={4} title="Crop a region" code="image[y1:y2, x1:x2]">
+            <RangeField
+              label="Crop left"
+              value={left}
+              min={0}
+              max={100}
+              format={percent}
+              onChange={setLeft}
+            />
+            <RangeField
+              label="Crop right"
+              value={right}
+              min={0}
+              max={100}
+              format={percent}
+              onChange={setRight}
+            />
+            <RangeField
+              label="Crop top"
+              value={top}
+              min={0}
+              max={100}
+              format={percent}
+              onChange={setTop}
+            />
+            <RangeField
+              label="Crop bottom"
+              value={bottom}
+              min={0}
+              max={100}
+              format={percent}
+              onChange={setBottom}
+            />
+          </Step>
+          <Step number={5} title="Resize and rotate" code="cv2.resize · cv2.rotate">
+            <RangeField
+              label="Resize"
+              value={scale}
+              min={0.1}
+              max={3}
+              step={0.1}
+              format={times}
+              onChange={setScale}
+            />
+            <SelectField
+              label="Rotate 90 degrees"
+              value={direction}
+              options={[
+                { value: "cw", label: "Clockwise" },
+                { value: "ccw", label: "Counterclockwise" },
+              ]}
+              onChange={setDirection}
+            />
+          </Step>
         </>
       }
     />

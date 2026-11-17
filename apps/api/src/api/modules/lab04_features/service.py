@@ -5,7 +5,7 @@ from cv_labs import lab04_surf as lab
 from cv_labs.common import to_gray
 
 from api.core.images import to_data_url
-from api.core.schemas import Chart, LabResult, Panel, Series, Table
+from api.core.schemas import Chart, LabResult, Panel, Readout, Series, Table
 
 
 def run(image: np.ndarray, second: np.ndarray | None, threshold: float, degrees: float, scale: float,
@@ -22,11 +22,13 @@ def run(image: np.ndarray, second: np.ndarray | None, threshold: float, degrees:
     panels = []
     for name, (kp1, kp2, matches) in drawn.items():
         panels.append(Panel(title=f"{name} keypoints", image=to_data_url(lab.draw_keypoints(gray, kp1)),
-                            caption=f"{len(kp1)} keypoints", group=name, large=True))
+                            caption=f"{len(kp1)} keypoints", group=name, large=True,
+                            step=3 if name == "SURF" else 5))
         best = sorted(matches, key=lambda m: m.distance)[:60]
         picture = cv2.drawMatches(gray, kp1, other, kp2, best, None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
         panels.append(Panel(title=f"{name} matches", image=to_data_url(picture),
-                            caption=f"Best {len(best)} of {len(matches)} matches", group=name, large=True))
+                            caption=f"Best {len(best)} of {len(matches)} matches", group=name, large=True,
+                            step=4 if name == "SURF" else 5))
 
     columns = ["Method", "Keypoints", "Descriptor", "Matches", "RANSAC inliers"]
     if truth is not None:
@@ -40,7 +42,14 @@ def run(image: np.ndarray, second: np.ndarray | None, threshold: float, degrees:
             values += [row["correct_matches"], round(row["correct_percent"], 1)]
         rows.append([*values, round(row["time_ms_image1"])])
 
-    surf_backend = table["SURF"]["backend"]
+    surf = table["SURF"]
+    readouts = [
+        Readout(label="SURF keypoints", value=surf["keypoints_image1"], step=2),
+        Readout(label="SURF matches after ratio test", value=surf["ratio_test_matches"], step=4),
+    ]
+    if truth is not None:
+        readouts.append(Readout(label="SURF correct matches", value=round(surf["correct_percent"], 1), unit="%", step=4))
+    surf_backend = surf["backend"]
     notes = [pair_note]
     if surf_backend != "opencv":
         notes.append("Standard OpenCV packages exclude SURF because it is patented, so this runs the project's own NumPy "
@@ -55,5 +64,5 @@ def run(image: np.ndarray, second: np.ndarray | None, threshold: float, degrees:
         charts.append(Chart(title="Correct matches under rotation", x_label="Rotation (degrees)", y_label="Correct matches",
                             series=[Series(label=name, x=[str(a) for a in values], y=[float(v) for v in values.values()])
                                     for name, values in rotation.items()]))
-    return LabResult(panels=panels, charts=charts, notes=notes,
+    return LabResult(panels=panels, charts=charts, notes=notes, readouts=readouts,
                      tables=[Table(title="Method comparison", columns=columns, rows=rows)])

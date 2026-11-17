@@ -4,7 +4,7 @@ from cv_labs import lab03_histogram as lab
 from cv_labs.common import to_gray
 
 from api.core.images import to_data_url
-from api.core.schemas import Chart, LabResult, Panel, Series, Table
+from api.core.schemas import Chart, LabResult, Panel, Readout, Series, Table
 
 LEVELS = list(range(256))
 
@@ -20,28 +20,37 @@ def run(image: np.ndarray, clip_limit: float, grid: int, low_pct: float, high_pc
     manual = lab.equalize_manual(gray)
     matches = float(100 * (manual == versions["Global equalization"]).mean())
 
-    panels = [Panel(title=name, image=to_data_url(result), group="Grayscale versions") for name, result in versions.items()]
+    # The lab sheet's procedure step that makes each version.
+    steps = {"Original": 1, "Contrast stretching": 4, "Global equalization": 3, "CLAHE": 5}
+    panels = [Panel(title=name, image=to_data_url(result), group="Grayscale versions", step=steps[name])
+              for name, result in versions.items()]
     panels.append(Panel(title="Equalized by hand (Part 3)", image=to_data_url(manual),
-                        caption=f"{matches:.2f}% of pixels match cv2.equalizeHist", group="Grayscale versions"))
+                        caption=f"{matches:.2f}% of pixels match cv2.equalizeHist", group="Grayscale versions", step=3))
     is_color = image.ndim == 3 and not (
         np.array_equal(image[:, :, 0], image[:, :, 1]) and np.array_equal(image[:, :, 1], image[:, :, 2]))
     if is_color:
         panels += [
-            Panel(title="Original color", image=to_data_url(image), group="Color equalization"),
-            Panel(title="Equalized on Y (YUV)", image=to_data_url(lab.equalize_color(image, "yuv")), group="Color equalization"),
-            Panel(title="Equalized on V (HSV)", image=to_data_url(lab.equalize_color(image, "hsv")), group="Color equalization"),
+            Panel(title="Original color", image=to_data_url(image), group="Color equalization", step=1),
+            Panel(title="Equalized on Y (YUV)", image=to_data_url(lab.equalize_color(image, "yuv")), group="Color equalization", step=3),
+            Panel(title="Equalized on V (HSV)", image=to_data_url(lab.equalize_color(image, "hsv")), group="Color equalization", step=3),
         ]
 
     charts = [Chart(title=name, kind="histogram", x_label="Intensity", y_label="Pixels",
                     series=[Series(label=name, x=LEVELS, y=lab.histogram(result).tolist())], group="Histograms")
               for name, result in versions.items()]
-    rows = []
+    rows, contrast = [], {}
     for name, result in versions.items():
         s = lab.stats(result, gray)
+        contrast[name] = round(s["std_contrast"], 1)
         rows.append([name, round(s["mean"], 1), round(s["std_contrast"], 1), s["min"], s["max"],
                      round(s["entropy_bits"], 2), round(s["flat_region_noise"], 2)])
     table = Table(title="Effect on the image",
                   columns=["Version", "Mean", "Contrast (std)", "Min", "Max", "Entropy (bits)", "Noise in flat areas"], rows=rows)
     notes = ["Noise in flat areas is the median variation in the flattest 10% of the original image. "
              "A rise means smooth regions were amplified."]
-    return LabResult(panels=panels, charts=charts, tables=[table], notes=notes)
+    readouts = [
+        Readout(label="Contrast (std), original", value=contrast["Original"], step=1),
+        Readout(label="Contrast (std), CLAHE", value=contrast["CLAHE"], step=5),
+        Readout(label="By-hand pixels matching cv2.equalizeHist", value=round(matches, 2), unit="%", step=3),
+    ]
+    return LabResult(panels=panels, charts=charts, tables=[table], notes=notes, readouts=readouts)

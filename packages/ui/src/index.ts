@@ -19,6 +19,7 @@ export {
 } from "./components/image-source/ImageSource";
 export { Loader } from "./components/loader/Loader";
 export { ResultView, type ResultData } from "./components/result-view/ResultView";
+export { Step } from "./components/step/Step";
 export { StatusBadge, type StatusTone } from "./components/status-badge/StatusBadge";
 export { Tabs } from "./components/tabs/Tabs";
 export { Workbench } from "./components/workbench/Workbench";
