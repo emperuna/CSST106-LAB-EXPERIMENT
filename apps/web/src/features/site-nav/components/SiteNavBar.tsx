@@ -41,7 +41,7 @@ export function SiteNavBar({ logo, links, labs, currentLab }: Props) {
   const menu = useDisclosure();
   const ids = links.map((link) => link.href.replace(/^#/, ""));
   const active = useActiveSection(barRef, ids);
-  // Once the page scrolls, the logo fades and only the pill stays.
+  // Once the page scrolls, the wordmark gives way to the mark in a tile.
   const scrolled = useScrolled();
   // A clicked link wins until its glide ends, so the indicator slides straight there.
   const scroll = useScrollTarget();
@@ -57,13 +57,18 @@ export function SiteNavBar({ logo, links, labs, currentLab }: Props) {
       data-open={menu.open || undefined}
     >
       <div className="site-nav-wrap site-nav-row">
+        {/* The wordmark at the top of the page; once scrolled, the mark alone in a tile. */}
         <a
           className="site-nav-logo"
           href={logo.href}
           aria-label="Reticle, home"
           onClick={scroll.onLinkClick}
-          dangerouslySetInnerHTML={{ __html: logo.svg }}
-        />
+        >
+          <span className="site-nav-wordmark" dangerouslySetInnerHTML={{ __html: logo.svg }} />
+          <span className="site-nav-mark">
+            <img src={logo.mark} alt="" width="22" height="22" />
+          </span>
+        </a>
 
         <nav ref={pillRef} className="site-nav-pill" aria-label="Site">
           <span
