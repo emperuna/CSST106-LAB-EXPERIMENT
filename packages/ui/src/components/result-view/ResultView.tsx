@@ -9,6 +9,14 @@ interface PanelData {
   caption?: string | null;
   group?: string | null;
   large?: boolean;
+  step?: number | null;
+}
+
+interface ReadoutData {
+  label: string;
+  value: string | number;
+  unit?: string | null;
+  step?: number | null;
 }
 
 /** Matches the API's LabResult, so any lab's response can be shown here. */
@@ -19,7 +27,33 @@ export interface ResultData {
   legend?: { label: string; color: string }[];
   videos?: { title: string; source: string }[];
   notes?: string[];
+  readouts?: ReadoutData[];
   elapsed_ms?: number;
+}
+
+const pad = (value: number) => String(value).padStart(2, "0");
+const stepTag = (step?: number | null) => (step ? `Step ${pad(step)}` : undefined);
+
+/** The run's headline measurements, large and in mono, each marked with its procedure step. */
+function Readouts({ readouts }: { readouts: ReadoutData[] }) {
+  return (
+    <dl className="readouts">
+      {readouts.map((readout) => (
+        <div key={readout.label} className="readout-card">
+          <dt>
+            {readout.step && <span className="readout-step">{pad(readout.step)}</span>}
+            {readout.label}
+          </dt>
+          <dd>
+            {typeof readout.value === "number"
+              ? readout.value.toLocaleString("en-US")
+              : readout.value}
+            {readout.unit && <span className="readout-unit">{readout.unit}</span>}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
 }
 
 function groupBy<T extends { group?: string | null }>(items: T[]) {
@@ -31,53 +65,71 @@ function groupBy<T extends { group?: string | null }>(items: T[]) {
   return [...groups.entries()];
 }
 
-function Panels({ panels }: { panels: PanelData[] }) {
+/**
+ * The viewer: one result large, with a filmstrip of every result to switch between. The stage
+ * opens the full-size image. A rerun keeps the same result selected when it is still there.
+ */
+function Viewer({ panels }: { panels: PanelData[] }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const [open, setOpen] = useState<PanelData | null>(null);
-
-  function show(panel: PanelData) {
-    setOpen(panel);
-    dialog.current?.showModal();
-  }
+  const [selected, setSelected] = useState<string | null>(null);
+  const current = panels.find((panel) => panel.title === selected) ?? panels[0]!;
 
   return (
-    <>
-      {groupBy(panels).map(([group, items]) => (
-        <section key={group} className="result-group">
-          {group && <h3>{group}</h3>}
-          <div className={`panel-grid${items.some((item) => item.large) ? " is-large" : ""}`}>
-            {items.map((panel) => (
-              <ImageFrame
-                key={panel.title}
-                src={panel.image}
-                alt={panel.title}
-                title={panel.title}
-                readout={panel.caption}
-                onOpen={() => show(panel)}
-              />
-            ))}
-          </div>
-        </section>
-      ))}
-      <dialog ref={dialog} className="lightbox" onClose={() => setOpen(null)}>
-        {open && (
-          <>
-            <div className="lightbox-head">
-              <strong>{open.title}</strong>
-              <button
-                type="button"
-                className="button button-secondary button-small"
-                onClick={() => dialog.current?.close()}
-              >
-                <X aria-hidden="true" />
-                Close
-              </button>
+    <section className="viewer" aria-label="Results">
+      <ImageFrame
+        src={current.image}
+        alt={current.title}
+        title={current.title}
+        readout={current.caption}
+        tag={stepTag(current.step)}
+        onOpen={() => dialog.current?.showModal()}
+      />
+      {panels.length > 1 && (
+        <div className="filmstrip">
+          {groupBy(panels).map(([group, items]) => (
+            <div
+              key={group}
+              className="filmstrip-group"
+              role="group"
+              aria-label={group || "Results"}
+            >
+              {group && <span className="filmstrip-label">{group}</span>}
+              <div className="filmstrip-items">
+                {items.map((panel) => (
+                  <button
+                    key={panel.title}
+                    type="button"
+                    className="filmstrip-item"
+                    aria-pressed={panel === current}
+                    onClick={() => setSelected(panel.title)}
+                  >
+                    <img src={panel.image} alt="" />
+                    <span>
+                      {panel.step && <span className="filmstrip-step">{pad(panel.step)}</span>}
+                      {panel.title}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
-            <img src={open.image} alt={open.title} />
-          </>
-        )}
+          ))}
+        </div>
+      )}
+      <dialog ref={dialog} className="lightbox">
+        <div className="lightbox-head">
+          <strong>{current.title}</strong>
+          <button
+            type="button"
+            className="button button-secondary button-small"
+            onClick={() => dialog.current?.close()}
+          >
+            <X aria-hidden="true" />
+            Close
+          </button>
+        </div>
+        <img src={current.image} alt={current.title} />
       </dialog>
-    </>
+    </section>
   );
 }
 
@@ -134,24 +186,19 @@ export function ResultView({ result }: { result: ResultData }) {
     legend = [],
     videos = [],
     notes = [],
+    readouts = [],
     elapsed_ms = 0,
   } = result;
   return (
     <div className="results">
-      {notes.length > 0 && (
-        <ul className="notes">
-          {notes.map((note) => (
-            <li key={note}>{note}</li>
-          ))}
-        </ul>
-      )}
+      {readouts.length > 0 && <Readouts readouts={readouts} />}
       {videos.map((video) => (
         <section key={video.title} className="result-group">
           <h3>{video.title}</h3>
           <video src={video.source} controls muted loop playsInline className="result-video" />
         </section>
       ))}
-      <Panels panels={panels} />
+      {panels.length > 0 && <Viewer panels={panels} />}
       {legend.length > 0 && (
         <ul className="legend" aria-label="Classes">
           {legend.map((item) => (
@@ -181,6 +228,13 @@ export function ResultView({ result }: { result: ResultData }) {
           <ResultTable key={table.title} table={table} />
         ))}
       </div>
+      {notes.length > 0 && (
+        <ul className="notes">
+          {notes.map((note) => (
+            <li key={note}>{note}</li>
+          ))}
+        </ul>
+      )}
       {elapsed_ms > 0 && <p className="elapsed">Computed in {(elapsed_ms / 1000).toFixed(2)} s</p>}
     </div>
   );

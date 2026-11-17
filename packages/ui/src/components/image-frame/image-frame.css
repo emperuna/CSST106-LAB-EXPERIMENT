@@ -67,6 +67,9 @@ button.frame {
   line-height: 1.4;
   color: var(--color-muted);
 }
+.panel .frame-tag {
+  color: var(--color-accent);
+}
 .panel figcaption strong {
   font-family: var(--font-sans);
   font-size: var(--text-sm);
