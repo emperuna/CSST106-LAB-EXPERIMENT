@@ -13,7 +13,7 @@
     "@astrojs/react": "^7.1.4",
     "@csst106/api-client": "workspace:*",
     "@csst106/tokens": "workspace:*",
-    "@csst106/ui": "workspace:*",
+    "@reticle/ui": "workspace:*",
     "@tanstack/react-query": "^5",
     "astro": "^7.4.7",
     "react": "^19.3.1",

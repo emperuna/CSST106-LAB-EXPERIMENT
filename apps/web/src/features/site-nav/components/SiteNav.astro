@@ -1,0 +1,45 @@
+---
+/**
+ * Prepares the site bar's data on the server: the lab list and small result thumbnails, so the
+ * island only receives plain props.
+ */
+import logoSource from "@csst106/tokens/brand/reticle-logo-dark.svg?raw";
+import mark from "@csst106/tokens/brand/reticle-mark-dark.svg?url";
+import { getImage } from "astro:assets";
+import { getCollection } from "astro:content";
+import { labPictures } from "@/shared/labPictures";
+import { SiteNavBar, type NavLink } from "./SiteNavBar";
+
+interface Props {
+  links?: NavLink[];
+  logoHref?: string;
+  currentLab?: number;
+}
+
+const { links = [], logoHref = "/", currentLab } = Astro.props;
+// One-colour logo, inlined in currentColor so it takes the bar's text colour. The link
+// carries the accessible name, so the drawing itself is hidden from screen readers.
+const logoSvg = logoSource
+  .replace(/<title>.*?<\/title>/, "")
+  .replace(' role="img" aria-label="Reticle"', ' aria-hidden="true" focusable="false"')
+  .replaceAll('fill="#ffffff"', 'fill="currentColor"');
+const entries = (await getCollection("labs")).sort((a, b) => a.data.number - b.data.number);
+const labs = await Promise.all(
+  entries.map(async (entry) => ({
+    number: entry.data.number,
+    title: entry.data.title,
+    summary: entry.data.summary,
+    href: `/labs/${entry.data.number}`,
+    thumb: (await getImage({ src: labPictures[entry.data.number - 1]!, width: 192, height: 128 }))
+      .src,
+  })),
+);
+---
+
+<SiteNavBar
+  client:load
+  logo={{ svg: logoSvg, mark, href: logoHref }}
+  links={links}
+  labs={labs}
+  currentLab={currentLab}
+/>

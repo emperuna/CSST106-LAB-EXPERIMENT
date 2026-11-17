@@ -1,11 +1,20 @@
 {
-  "name": "@csst106/ui",
+  "name": "@reticle/ui",
   "version": "0.1.0",
+  "description": "Reticle components and styles",
   "private": true,
   "type": "module",
-  "exports": { ".": "./src/index.ts", "./styles.css": "./src/styles.css" },
-  "dependencies": { "@csst106/tokens": "workspace:*" },
-  "peerDependencies": { "react": "^19" },
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles/index.css"
+  },
+  "dependencies": {
+    "@csst106/tokens": "workspace:*",
+    "lucide-react": "1.61.0"
+  },
+  "peerDependencies": {
+    "react": "^19"
+  },
   "devDependencies": {
     "@csst106/config": "workspace:*",
     "@types/react": "^19",

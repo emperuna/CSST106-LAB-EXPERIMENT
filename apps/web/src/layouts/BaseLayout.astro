@@ -1,14 +1,21 @@
 ---
 import "@csst106/tokens/tokens.css";
-import "@csst106/ui/styles.css";
+import "@reticle/ui/styles.css";
+import logoDarkUrl from "@csst106/tokens/brand/reticle-logo-dark.svg?url";
 import { getCollection } from "astro:content";
 
 interface Props {
   title: string;
   description?: string;
+  /** No sidebar or main element: the page brings its own main, header and footer. */
+  bare?: boolean;
 }
 
-const { title, description = "CSST106 Perception and Computer Vision laboratory experiments." } = Astro.props;
+const {
+  title,
+  description = "CSST106 Perception and Computer Vision laboratory experiments.",
+  bare = false,
+} = Astro.props;
 const labs = (await getCollection("labs")).sort((a, b) => a.data.number - b.data.number);
 const current = Astro.url.pathname.replace(/\/$/, "");
 ---
@@ -19,16 +26,20 @@ const current = Astro.url.pathname.replace(/\/$/, "");
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='3' fill='%238f2424'/><circle cx='8' cy='8' r='3' fill='white'/></svg>" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>{title}</title>
   </head>
   <body>
     <a class="skip-link" href="#content">Skip to content</a>
+    {
+      bare ? (
+        <slot />
+      ) : (
     <div class="shell">
       <aside class="sidebar">
-        <a class="brand" href="/">
-          <strong>CSST106</strong>
-          <span>Perception and Computer Vision</span>
+        <a class="brand" href="/" aria-label="Reticle home">
+          <img src={logoDarkUrl} alt="" width="149" height="36" />
         </a>
         <nav aria-label="Laboratory activities">
           <ol>
@@ -52,6 +63,8 @@ const current = Astro.url.pathname.replace(/\/$/, "");
         <slot />
       </main>
     </div>
+      )
+    }
     <script>
       // On phones the lab list scrolls sideways; keep the current lab in view.
       document
@@ -64,26 +77,6 @@ const current = Astro.url.pathname.replace(/\/$/, "");
 <style is:global>
   html {
     -webkit-text-size-adjust: 100%;
-  }
-  body {
-    margin: 0;
-    background: var(--color-bg);
-    color: var(--color-text);
-    font-family: var(--font-sans);
-    font-size: var(--text-md);
-    line-height: 1.55;
-  }
-  a {
-    color: var(--color-accent);
-  }
-  a:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-  code {
-    font-family: var(--font-mono);
-    font-size: 0.9em;
-    overflow-wrap: anywhere;
   }
   .skip-link {
     position: absolute;
@@ -117,13 +110,10 @@ const current = Astro.url.pathname.replace(/\/$/, "");
     color: inherit;
     text-decoration: none;
   }
-  .brand strong {
-    font-family: var(--font-serif);
-    font-size: var(--text-lg);
-  }
-  .brand span {
-    font-size: var(--text-xs);
-    color: var(--color-muted);
+  .brand img {
+    display: block;
+    width: auto;
+    height: 2.25rem;
   }
   .sidebar ol {
     display: flex;
@@ -149,7 +139,9 @@ const current = Astro.url.pathname.replace(/\/$/, "");
   .sidebar nav a[aria-current="page"] {
     font-weight: 600;
     background: var(--color-sunken);
-    box-shadow: inset 2px 0 0 var(--color-accent);
+  }
+  .sidebar nav a[aria-current="page"] .number {
+    color: var(--color-text);
   }
   .number {
     flex: none;
@@ -191,9 +183,6 @@ const current = Astro.url.pathname.replace(/\/$/, "");
     .sidebar nav a {
       white-space: nowrap;
       padding: var(--space-2);
-    }
-    .sidebar nav a[aria-current="page"] {
-      box-shadow: inset 0 -2px 0 var(--color-accent);
     }
     main {
       padding: var(--space-5) var(--space-4);

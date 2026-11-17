@@ -1,1 +1,1 @@
-export { PcaLab } from "./PcaLab";
+export { PcaLab } from "./components/PcaLab";

@@ -1,0 +1,268 @@
+---
+/*
+ * Home page, built with the design-taste-frontend skill on the Reticle design system.
+ * Kind: software. Deal: hero split, nav-centre, close-type, rhythm dark-band, features-2x2 and
+ * split-text-left, buttons solid (Reticle's own button). The skill's palette, type and shadow
+ * effects are not used: Reticle's tokens and flat brand take their place.
+ * Screens: hero 1, labs 1, results 1 (dark band), how 1, notes 1, close and footer 1.
+ */
+import { getImage, Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import spacewalkVideo from "../assets/spacewalk-loop.mp4?url";
+import spacewalkPoster from "../assets/spacewalk-poster.jpg";
+import { DitherVideo } from "./DitherVideo";
+import { pixelSample } from "../data/results";
+import { notes, weakResults } from "../data/sheetNotes";
+import { PixelZoom } from "./PixelZoom";
+import { ControlsToCode } from "./ControlsToCode";
+import { DitherStill } from "./DitherStill";
+import cannySweep from "@outputs/lab02/canny_thresholds.png";
+// The close: a Lab 6 result, the trained model finding a rhino in an unseen test image.
+import closingFrame from "@outputs/lab06/test_3 (143).jpg";
+import { stages } from "../data/labStages";
+import logoSource from "@csst106/tokens/brand/reticle-logo-dark.svg?raw";
+import { litCells, readouts, type Visual } from "../data/measurements";
+import { cropStyle } from "../utils/crop";
+
+const labs = (await getCollection("labs")).sort((a, b) => a.data.number - b.data.number);
+const labByNumber = new Map(labs.map((lab) => [lab.data.number, lab]));
+// The logo, drawn in the text colour, for the footer.
+const wordmark = logoSource
+  .replace(/<title>.*?<\/title>/, "")
+  .replace(' role="img" aria-label="Reticle"', ' aria-hidden="true" focusable="false"')
+  .replaceAll('fill="#ffffff"', 'fill="currentColor"');
+type ObjectsVisual = Extract<Visual, { kind: "objects" }>;
+// Lab 2's sample, and its saved Canny threshold sweep, for the controls-to-code section.
+const c2cInput = (await getImage({ src: pixelSample, width: 96 })).src;
+const c2cSweep = { src: (await getImage({ src: cannySweep, width: cannySweep.width })).src, width: cannySweep.width, height: cannySweep.height };
+---
+
+<main id="content" class="home">
+  <section class="hero section" id="top" aria-labelledby="home-title">
+    <DitherVideo client:load src={spacewalkVideo} poster={spacewalkPoster.src} />
+    <div class="wrap hero-copy">
+      <h1 id="home-title">See what a<br />computer sees</h1>
+      <p class="hero-line">
+        Seven computer vision labs for CSST106, run in your browser. Every image becomes numbers.
+      </p>
+    </div>
+  </section>
+
+  <section class="pixels" id="pixels" aria-labelledby="pixels-title">
+    <PixelZoom client:load src={pixelSample.src} />
+  </section>
+
+  <section class="journey" id="labs" aria-labelledby="labs-title">
+    <div class="wrap">
+      <header class="journey-head">
+        <h2 id="labs-title">Seven labs, from pixels to understanding</h2>
+        <p class="intro">
+          Each lab follows its activity sheet and runs on real images. Every picture here is a result
+          the lab produced.
+        </p>
+      </header>
+      <ol class="journey-stages">
+        {
+          stages.map((stage, stageIndex) => (
+            <li class="journey-stage">
+              <div class="journey-stage-label">
+                <span class="journey-stage-number">0{stageIndex + 1}</span>
+                <h3>{stage.name}</h3>
+                <p>{stage.blurb}</p>
+              </div>
+              <ol class="journey-tiles" style={`--tiles: ${stage.labs.length}`}>
+                {stage.labs.map((tile) => {
+                  const lab = labByNumber.get(tile.number)!;
+                  return (
+                    <li>
+                      <a class="lab-tile" href={`/labs/${tile.number}`}>
+                        <span class="lab-tile-media" style={`aspect-ratio: ${stage.aspect}`}>
+                          {tile.panels ? (
+                            <span class="lab-tile-panels">
+                              {tile.panels.map((panel, index) => (
+                                <span class="lab-tile-panel" style={`aspect-ratio: ${panel.w} / ${panel.h}`}>
+                                  <Image
+                                    src={tile.image}
+                                    alt={index === 0 ? tile.alt : ""}
+                                    widths={[tile.image.width]}
+                                    sizes={`${tile.image.width}px`}
+                                    style={cropStyle(tile.image, panel, panel.w / panel.h)}
+                                  />
+                                </span>
+                              ))}
+                            </span>
+                          ) : (
+                            <Image
+                              src={tile.image}
+                              alt={tile.alt}
+                              widths={tile.crop ? [tile.image.width] : [480, 960]}
+                              sizes={tile.crop ? `${tile.image.width}px` : "(max-width: 640px) 100vw, 40vw"}
+                              style={tile.crop ? cropStyle(tile.image, tile.crop, stage.aspect) : undefined}
+                            />
+                          )}
+                        </span>
+                        <span class="lab-tile-meta">
+                          <span class="lab-tile-number">Lab 0{tile.number}</span>
+                          <strong>{lab.data.title}</strong>
+                          <span class="lab-tile-summary">{lab.data.summary}</span>
+                        </span>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ol>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="measures" id="results" aria-labelledby="results-title">
+    <div class="wrap">
+      <header class="measures-head">
+        <h2 id="results-title">Every result comes with its numbers</h2>
+        <p class="intro">
+          One measurement from each lab, read straight from the files the lab saved. Each says what
+          it measured and under what conditions.
+        </p>
+      </header>
+      <ol class="measures-rack">
+        {
+          readouts.map((r) => (
+            <li>
+              <a class="measure" href={`/labs/${r.lab}`}>
+                <span class="measure-channel">
+                  <span>Lab 0{r.lab}</span>
+                  <span>{r.title}</span>
+                </span>
+                <span class="measure-value">
+                  {r.value}
+                  {r.unit && <span class="measure-unit">{r.unit}</span>}
+                </span>
+                <span class="measure-label">{r.label}</span>
+                <span class="measure-visual" aria-hidden="true">
+                  {r.visual.kind === "pixels" && (
+                    <span class="measure-pixels">
+                      {litCells(r.visual).map((lit) => (
+                        <span data-lit={lit || undefined} />
+                      ))}
+                    </span>
+                  )}
+                  {r.visual.kind === "bars" && (
+                    <span class="measure-bars">
+                      {r.visual.bars.map((bar) => (
+                        <span class="measure-bar" data-current={bar.current || undefined}>
+                          <span class="measure-bar-label">{bar.label}</span>
+                          <span class="measure-bar-track">
+                            <span style={`width: ${(bar.share * 100).toFixed(1)}%`} />
+                          </span>
+                          <span class="measure-bar-text">{bar.text}</span>
+                        </span>
+                      ))}
+                    </span>
+                  )}
+                  {r.visual.kind === "objects" && (
+                    <span class="measure-bars">
+                      {r.visual.rows.map((row) => (
+                        <span class="measure-bar" data-current={row.current || undefined}>
+                          <span class="measure-bar-label">{row.label}</span>
+                          <span class="measure-objects">
+                            {Array.from({ length: (r.visual as ObjectsVisual).truth }, (_, i) => (
+                              <span data-lit={i < row.found || undefined} />
+                            ))}
+                          </span>
+                          <span class="measure-bar-text">{row.found}</span>
+                        </span>
+                      ))}
+                    </span>
+                  )}
+                </span>
+                <span class="measure-note">{r.note}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="behind" id="how" aria-labelledby="how-title">
+    <div class="wrap">
+      <header class="behind-head">
+        <h2 id="how-title">Every control is a line of code</h2>
+        <p class="intro">
+          Lab 2 as an example: point at a control to see the exact Python it feeds, and switch the
+          Canny thresholds to see results the lab saved. Every lab works the same way.
+        </p>
+      </header>
+      <ControlsToCode client:idle input={c2cInput} sweep={c2cSweep} />
+    </div>
+  </section>
+
+  <section class="sheetdiff" id="notes" aria-labelledby="notes-title">
+    <div class="wrap">
+      <header class="sheetdiff-head">
+        <h2 id="notes-title">Where this project differs from the lab sheets</h2>
+        <p class="intro">
+          Each change against the activity sheets, why it was made, and what it measured. Weak
+          results stay exactly as they came out.
+        </p>
+      </header>
+      <ol class="sheetdiff-list">
+        {
+          notes.map((note) => (
+            <li class="diff-note">
+              <div class="diff-meta">
+                <span class="diff-lab">{note.lab}</span>
+                <h3>{note.title}</h3>
+              </div>
+              <div class="diff-body">
+                <p class="diff-line diff-del">
+                  <span class="diff-sign" aria-hidden="true">−</span>
+                  <span class="diff-who">Lab sheet</span>
+                  {note.sheet ? <span class="diff-text">{note.sheet}</span> : <span class="diff-text diff-none">Not specified</span>}
+                </p>
+                <p class="diff-line diff-add">
+                  <span class="diff-sign" aria-hidden="true">+</span>
+                  <span class="diff-who">This project</span>
+                  <span class="diff-text">{note.project}</span>
+                </p>
+                <p class="diff-why">{note.why}</p>
+              </div>
+              {note.evidence && (
+                <div class="diff-evidence">
+                  <span class="diff-value">{note.evidence.value}</span>
+                  <span>{note.evidence.label}</span>
+                </div>
+              )}
+            </li>
+          ))
+        }
+      </ol>
+      <div class="sheetdiff-weak">
+        <span class="sheetdiff-weak-label">Reported as measured</span>
+        <ul>
+          {weakResults.map((result) => <li>{result}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="finale" id="start" aria-labelledby="finale-title">
+    <DitherStill client:idle src={closingFrame.src} />
+    <div class="wrap finale-copy">
+      <h2 id="finale-title">Now you&rsquo;ve seen what a computer sees.</h2>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" id="contact">
+  <div class="wrap footer-row">
+    <a class="footer-logo" href="#top" aria-label="Reticle, back to top" set:html={wordmark} />
+    <nav class="footer-links" aria-label="Project">
+      <a href="/design-system">Design system</a>
+      <a href="https://github.com/emperuna/CSST106-LAB-EXPERIMENT">GitHub</a>
+    </nav>
+  </div>
+</footer>

@@ -1,1 +1,1 @@
-export { YoloLab } from "./YoloLab";
+export { YoloLab } from "./components/YoloLab";

@@ -2,8 +2,24 @@
   "extends": "@csst106/config/tsconfig",
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": { "@/*": ["src/*"] }
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@outputs/*": [
+        "../../outputs/*"
+      ],
+      "@samples/*": [
+        "../../packages/cv-labs/samples/*"
+      ]
+    },
+    "resolveJsonModule": true
   },
-  "include": [".astro/types.d.ts", "src"],
-  "exclude": ["dist"]
+  "include": [
+    ".astro/types.d.ts",
+    "src"
+  ],
+  "exclude": [
+    "dist"
+  ]
 }

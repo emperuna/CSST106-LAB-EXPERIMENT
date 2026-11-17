@@ -1,0 +1,54 @@
+/* Gauge: a dial with a scale */
+.gauge {
+  box-sizing: border-box;
+  max-width: 16rem;
+  margin: 0;
+  padding: var(--space-4);
+}
+.gauge figcaption {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.gauge svg {
+  display: block;
+  width: 100%;
+  margin-top: var(--space-3);
+}
+.gauge path {
+  fill: none;
+}
+.gauge-track {
+  stroke: var(--color-sunken);
+  stroke-width: 8;
+}
+.gauge-fill {
+  stroke: var(--color-accent);
+  stroke-width: 8;
+}
+.gauge-tick {
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+}
+.gauge-needle {
+  stroke: var(--color-text);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.gauge-hub {
+  fill: var(--color-text);
+}
+.gauge-value {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  text-align: center;
+}
+.gauge-scale {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}

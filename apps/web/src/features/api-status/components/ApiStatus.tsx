@@ -1,5 +1,5 @@
 import { LabProvider } from "@csst106/api-client";
-import { StatusBadge } from "@csst106/ui";
+import { StatusBadge } from "@reticle/ui";
 import { useHealth } from "../hooks/useHealth";
 
 function Status() {

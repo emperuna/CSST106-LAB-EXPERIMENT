@@ -111,3 +111,4 @@ uv run python -m cv_labs.lab06_yolo evaluate
 - Labeled Faces in the Wild, through scikit-learn
 - African Wildlife dataset and YOLO11n weights, from Ultralytics
 - DeepLabV3 MobileNetV3-Large weights, from torchvision
+- Home page hero footage, from NASA, "Spacewalks in HD 2020-2021"

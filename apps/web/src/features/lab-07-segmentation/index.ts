@@ -1,1 +1,1 @@
-export { SegmentationLab } from "./SegmentationLab";
+export { SegmentationLab } from "./components/SegmentationLab";

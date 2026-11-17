@@ -1,1 +1,1 @@
-export { ImagesLab } from "./ImagesLab";
+export { ImagesLab } from "./components/ImagesLab";
