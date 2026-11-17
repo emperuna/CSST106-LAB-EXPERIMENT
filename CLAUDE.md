@@ -104,5 +104,7 @@ as it is.
 - Work happens in this order: labs, Web UI, then report. Don't start the report or answer the lab
   sheets' written questions until asked.
 - The user creates and manages the GitHub repo. Don't run `git init`, commit or push unless asked.
+- Commits and pull requests carry no AI attribution: no `Co-Authored-By: Claude` trailer and no
+  "Generated with Claude Code" line. Use Conventional Commit messages.
 - Before calling work done, run the checks above. For UI changes, also run the page in a browser
   and say what couldn't be tested. The live webcam still hasn't been tested.
