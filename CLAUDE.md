@@ -18,7 +18,7 @@ These are settled, so don't suggest replacing them:
 - `apps/web`: Astro site. Lab code is in `src/features/lab-NN-*`, and lab text is in `src/content/labs`.
 - `apps/api`: `src/api/modules/labNN_*` has one module per lab, and `src/api/core` holds shared code.
 - `packages/cv-labs`: the computer vision code, samples, trained weights and tests.
-- `packages/tokens`, `ui`, `api-client`, `config`: shared frontend code.
+- `packages/tokens`, `ui` (`@reticle/ui`), `api-client`, `config`: shared frontend code.
 
 ## Boundaries
 
@@ -26,6 +26,9 @@ These are settled, so don't suggest replacing them:
 - Shared code belongs in `packages/`. Keep `apps/web/src/shared` small.
 - A feature is imported only through its `index.ts`, and features don't import each other. ESLint
   enforces this.
+- Inside a feature, files sit in `components/`, `hooks/` (API calls and effects), `utils/` (pure
+  helpers, option lists, presets), `styles/`, `assets/` and `data/`. Create a folder only when it
+  has a file, and keep components to rendering.
 - API modules use `api.core` and `cv_labs`, and don't import each other.
 - `cv-labs` knows nothing about HTTP, and its functions take and return arrays.
 
@@ -37,7 +40,7 @@ Run these from the repo root:
 - Python tests: `pnpm test:py`
 - Frontend checks: `pnpm typecheck`, `pnpm lint`, `pnpm build`
 - After changing `packages/ui` or `packages/api-client`, also run
-  `pnpm --filter @csst106/ui exec tsc --noEmit` and the same for `@csst106/api-client`.
+  `pnpm --filter @reticle/ui exec tsc --noEmit` and the same for `@csst106/api-client`.
   `pnpm typecheck` only starts from `apps/web`.
 - After changing an API schema or route: `pnpm gen:api`
 - Regenerate lab results: `uv run python scripts/run_all.py`
@@ -56,18 +59,28 @@ Run these from the repo root:
 
 ## Frontend rules
 
-- Follow `docs/design/brand.md` for the brand: a cartoon instrument called Vision Lab, starting in
-  light mode.
-- The home page follows the `design-taste-frontend` skill in full. Lab pages use only its system
-  (tokens, one button style, one card style, even edges, hover behavior), not its marketing rules on
-  captions, word counts, one section per screen or hero effects.
-- Take colors, type and spacing from `packages/tokens/tokens.css`, not hardcoded values. Every
-  color needs a light and dark value.
-- Put shared styles in `packages/ui/src/styles.css`.
+- `BRAND.md` is the brand (name, voice, logo), and `DESIGN.md` is the Reticle design system in
+  Google's DESIGN.md format. Follow both: a flat measuring instrument in graphite and teal, dark
+  only, with no light mode or theme switch. No shadows, and hover never lifts or bounces. Keep
+  `DESIGN.md` in sync with `packages/tokens/tokens.css`, and check it with
+  `npx @google/design.md lint DESIGN.md`.
+- `apps/web/public` holds only favicons and similar static files. Images a component uses sit beside
+  it and are imported.
+- Use the `design-taste-frontend` skill for any design or redesign work, on any page. On lab pages,
+  result labels are data readouts, so its no-caption rule doesn't apply to them.
+- Take colors, type and spacing from `packages/tokens/tokens.css`, not hardcoded values. Each
+  token has one value, because there is one theme.
+- The design system is called Reticle. `/design-system` shows every token and shared component. Add
+  new shared components there.
+- In `packages/ui/src`, each component has a folder in `components/` holding its `.tsx` and its
+  `.css`. Shared base styles are in `styles/`, and `styles/index.css` imports them all in cascade
+  order. Styles for one lab feature sit beside that feature.
 - Layouts must work at phone width without horizontal page scrolling.
 - Keep logic in `.tsx` islands and `.astro` files thin, because `tsc` doesn't check `.astro` files.
   `astro check` crashes on a missing `@emnapi/core`, so it isn't used.
 - Astro can't hydrate dynamic components, so each lab keeps its own page in `src/pages/labs`.
+- Icons come from `@reticle/ui` (Lucide, curated in `packages/ui/src/icons`). Add a new icon there
+  and to `/design-system`, never import `lucide-react` directly in the app.
 - An island needs `LabProvider` from `@csst106/api-client` to use TanStack Query.
 - Generated files are never edited by hand: `packages/api-client/openapi.json` and `src/schema.d.ts`.
 
