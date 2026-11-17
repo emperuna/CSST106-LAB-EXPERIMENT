@@ -1,15 +1,7 @@
-import {
-  api,
-  formBody,
-  imageFields,
-  LabProvider,
-  unwrap,
-  useSamples,
-  type ImageChoice,
-} from "@csst106/api-client";
-import { ImageSource, RangeField, useRunOnce, Workbench } from "@csst106/ui";
-import { useMutation } from "@tanstack/react-query";
+import { LabProvider, useSamples, type ImageChoice } from "@csst106/api-client";
+import { ImageSource, RangeField, useRunOnce, Workbench } from "@reticle/ui";
 import { useState } from "react";
+import { useHistogramRun } from "../hooks/useHistogramRun";
 
 function Lab() {
   const samples = useSamples(["low_contrast.png", "coffee.jpg", "camera.png", "page.png"]);
@@ -19,15 +11,7 @@ function Lab() {
   const [low, setLow] = useState(2);
   const [high, setHigh] = useState(98);
 
-  const run = useMutation({
-    mutationFn: () =>
-      unwrap(
-        api.POST("/api/labs/lab03/run", {
-          body: { ...imageFields(image), clip_limit: clip, grid, low_pct: low, high_pct: high },
-          bodySerializer: formBody,
-        }),
-      ),
-  });
+  const run = useHistogramRun({ image, clip, grid, low, high });
   useRunOnce(() => run.mutate());
 
   return (

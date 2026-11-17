@@ -1,0 +1,12 @@
+/* Webcam tab: live camera preview beside the latest detected frame */
+.camera-video {
+  display: block;
+  width: 100%;
+  background: var(--color-well);
+  border-radius: var(--radius);
+}
+.camera-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--space-4);
+}

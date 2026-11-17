@@ -1,18 +1,8 @@
-import {
-  api,
-  formBody,
-  imageFields,
-  LabProvider,
-  unwrap,
-  useSamples,
-  type ImageChoice,
-} from "@csst106/api-client";
-import { ImageSource, RangeField, SelectField, useRunOnce, Workbench } from "@csst106/ui";
-import { useMutation } from "@tanstack/react-query";
+import { LabProvider, useSamples, type ImageChoice } from "@csst106/api-client";
+import { ImageSource, RangeField, SelectField, useRunOnce, Workbench } from "@reticle/ui";
 import { useState } from "react";
-
-const sizes = (values: number[]) =>
-  values.map((value) => ({ value, label: `${value} x ${value}` }));
+import { useEdgesRun } from "../hooks/useEdgesRun";
+import { kernelSizes } from "../utils/kernelSizes";
 
 function Lab() {
   const samples = useSamples(["input.jpg", "coffee.jpg", "camera.png", "coins.png"]);
@@ -22,15 +12,7 @@ function Lab() {
   const [low, setLow] = useState(100);
   const [high, setHigh] = useState(200);
 
-  const run = useMutation({
-    mutationFn: () =>
-      unwrap(
-        api.POST("/api/labs/lab02/run", {
-          body: { ...imageFields(image), blur, sobel_size: sobelSize, low, high },
-          bodySerializer: formBody,
-        }),
-      ),
-  });
+  const run = useEdgesRun({ image, blur, sobelSize, low, high });
   useRunOnce(() => run.mutate());
 
   return (
@@ -45,14 +27,14 @@ function Lab() {
           <SelectField
             label="Gaussian blur"
             value={blur}
-            options={sizes([1, 3, 5, 7, 9])}
+            options={kernelSizes([1, 3, 5, 7, 9])}
             onChange={setBlur}
             hint="1 x 1 means no blur."
           />
           <SelectField
             label="Sobel kernel"
             value={sobelSize}
-            options={sizes([3, 5, 7])}
+            options={kernelSizes([3, 5, 7])}
             onChange={setSobelSize}
           />
           <RangeField

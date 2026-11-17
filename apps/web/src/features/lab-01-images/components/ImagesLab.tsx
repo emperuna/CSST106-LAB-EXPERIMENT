@@ -1,12 +1,4 @@
-import {
-  api,
-  formBody,
-  imageFields,
-  LabProvider,
-  unwrap,
-  useSamples,
-  type ImageChoice,
-} from "@csst106/api-client";
+import { LabProvider, useSamples, type ImageChoice } from "@csst106/api-client";
 import {
   ColorField,
   ImageSource,
@@ -15,11 +7,10 @@ import {
   SelectField,
   useRunOnce,
   Workbench,
-} from "@csst106/ui";
-import { useMutation } from "@tanstack/react-query";
+} from "@reticle/ui";
 import { useState } from "react";
-
-const percent = (value: number) => `${value}%`;
+import { useImagesRun } from "../hooks/useImagesRun";
+import { percent, times } from "../utils/format";
 
 function Lab() {
   const samples = useSamples(["input.jpg", "coffee.jpg", "camera.png", "bus.jpg"]);
@@ -34,25 +25,17 @@ function Lab() {
   const [scale, setScale] = useState(0.5);
   const [direction, setDirection] = useState<"cw" | "ccw">("cw");
 
-  const run = useMutation({
-    mutationFn: () =>
-      unwrap(
-        api.POST("/api/labs/lab01/run", {
-          body: {
-            ...imageFields(image),
-            pixel_x: x,
-            pixel_y: y,
-            color,
-            crop_left: left,
-            crop_right: right,
-            crop_top: top,
-            crop_bottom: bottom,
-            scale,
-            clockwise: direction === "cw",
-          },
-          bodySerializer: formBody,
-        }),
-      ),
+  const run = useImagesRun({
+    image,
+    x,
+    y,
+    color,
+    left,
+    right,
+    top,
+    bottom,
+    scale,
+    direction,
   });
   useRunOnce(() => run.mutate());
 
@@ -108,7 +91,7 @@ function Lab() {
             min={0.1}
             max={3}
             step={0.1}
-            format={(v) => `${v}x`}
+            format={times}
             onChange={setScale}
           />
           <SelectField

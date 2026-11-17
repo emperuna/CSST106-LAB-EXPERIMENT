@@ -1,35 +1,25 @@
 import { api, formBody, unwrap } from "@csst106/api-client";
-import { RangeField, SelectField } from "@csst106/ui";
 import { useEffect, useRef, useState } from "react";
-import type { ModelName } from "./YoloLab";
+import { cameraError } from "../utils/cameraError";
+import type { ModelName } from "../utils/models";
 
 const FRAME_WIDTH = 640;
-
-function cameraError(error: unknown): string {
-  const name = (error as { name?: string })?.name;
-  if (name === "NotAllowedError")
-    return "Camera permission was denied. Allow it in your browser, then try again.";
-  if (name === "NotFoundError") return "No camera was found on this device.";
-  if (name === "NotReadableError") return "The camera is being used by another app.";
-  return error instanceof Error ? error.message : "The camera could not be started.";
-}
 
 /**
  * Real-time detection: send a frame, draw the result, then send the next. Waiting for each
  * reply means the frame rate adjusts itself to what the computer can handle.
  */
-export function WebcamTab({ models }: { models: { value: ModelName; label: string }[] }) {
-  const video = useRef<HTMLVideoElement>(null);
-  const settings = useRef({ model: "coco" as ModelName, conf: 0.25 });
+export function useWebcamDetection(model: ModelName, conf: number) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const settings = useRef({ model, conf });
   const stopRef = useRef<(() => void) | null>(null);
-  const [model, setModel] = useState<ModelName>("coco");
-  const [conf, setConf] = useState(0.25);
   const [active, setActive] = useState(false);
   const [frame, setFrame] = useState<string | null>(null);
   const [fps, setFps] = useState<number | null>(null);
   const [count, setCount] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // The loop reads the latest settings, so changing them takes effect on the next frame.
   settings.current = { model, conf };
   useEffect(() => () => stopRef.current?.(), []);
 
@@ -45,7 +35,7 @@ export function WebcamTab({ models }: { models: { value: ModelName; label: strin
       setError(cameraError(problem));
       return;
     }
-    const element = video.current;
+    const element = videoRef.current;
     if (!element) return;
     element.srcObject = stream;
     await element.play();
@@ -94,58 +84,7 @@ export function WebcamTab({ models }: { models: { value: ModelName; label: strin
     }
   }
 
-  return (
-    <div className="workbench">
-      <div className="controls">
-        <SelectField label="Model" value={model} options={models} onChange={setModel} />
-        <RangeField
-          label="Confidence threshold"
-          value={conf}
-          min={0.05}
-          max={0.95}
-          step={0.05}
-          format={(v) => `${Math.round(v * 100)}%`}
-          onChange={setConf}
-        />
-        {active ? (
-          <button type="button" className="button-secondary" onClick={() => stopRef.current?.()}>
-            Stop camera
-          </button>
-        ) : (
-          <button type="button" className="button" onClick={start}>
-            Start camera
-          </button>
-        )}
-        <p className="field-note">Frames go only to this project's API, and are not saved.</p>
-      </div>
-      <div className="output" aria-live="polite">
-        {error && (
-          <p className="error" role="alert">
-            {error}
-          </p>
-        )}
-        {!active && !frame && !error && (
-          <p className="waiting">Start the camera to detect objects live.</p>
-        )}
-        <div className="camera-grid">
-          <video
-            ref={video}
-            className="camera-video"
-            muted
-            playsInline
-            hidden={!active}
-            aria-label="Camera preview"
-          />
-          {frame && (
-            <img src={frame} alt="Latest frame with detected objects" className="camera-video" />
-          )}
-        </div>
-        {fps !== null && (
-          <p className="elapsed">
-            {fps.toFixed(1)} FPS · {count} objects in the latest frame
-          </p>
-        )}
-      </div>
-    </div>
-  );
+  const stop = () => stopRef.current?.();
+
+  return { videoRef, active, frame, fps, count, error, start, stop };
 }

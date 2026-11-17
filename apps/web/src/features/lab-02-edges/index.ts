@@ -1,1 +1,1 @@
-export { EdgesLab } from "./EdgesLab";
+export { EdgesLab } from "./components/EdgesLab";

@@ -1,1 +1,1 @@
-export { HistogramLab } from "./HistogramLab";
+export { HistogramLab } from "./components/HistogramLab";

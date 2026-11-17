@@ -1,15 +1,7 @@
-import {
-  api,
-  formBody,
-  imageFields,
-  LabProvider,
-  unwrap,
-  useSamples,
-  type ImageChoice,
-} from "@csst106/api-client";
-import { CheckField, FileField, ImageSource, RangeField, Workbench } from "@csst106/ui";
-import { useMutation } from "@tanstack/react-query";
+import { LabProvider, useSamples, type ImageChoice } from "@csst106/api-client";
+import { CheckField, FileField, ImageSource, RangeField, Workbench } from "@reticle/ui";
 import { useState } from "react";
+import { useFeaturesRun } from "../hooks/useFeaturesRun";
 
 function Lab() {
   const samples = useSamples(["camera.png", "coffee.jpg", "input.jpg", "coins.png"]);
@@ -20,22 +12,7 @@ function Lab() {
   const [scale, setScale] = useState(0.8);
   const [sweeps, setSweeps] = useState(false);
 
-  const run = useMutation({
-    mutationFn: () =>
-      unwrap(
-        api.POST("/api/labs/lab04/run", {
-          body: {
-            ...imageFields(image),
-            second_image: (second ?? undefined) as unknown as string | undefined,
-            threshold,
-            degrees,
-            scale,
-            include_sweeps: sweeps,
-          },
-          bodySerializer: formBody,
-        }),
-      ),
-  });
+  const run = useFeaturesRun({ image, second, threshold, degrees, scale, sweeps });
 
   return (
     <Workbench

@@ -1,1 +1,1 @@
-export { FeaturesLab } from "./FeaturesLab";
+export { FeaturesLab } from "./components/FeaturesLab";
