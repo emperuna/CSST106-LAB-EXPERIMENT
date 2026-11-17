@@ -1,5 +1,5 @@
 import { useSamples, type ImageChoice } from "@csst106/api-client";
-import { ImageSource, Workbench } from "@reticle/ui";
+import { ImageSource, Step, Workbench } from "@reticle/ui";
 import { useState } from "react";
 import { useSemanticRun } from "../hooks/useSemanticRun";
 
@@ -16,7 +16,11 @@ export function SemanticTab() {
       emptyMessage="Run to label each pixel. The first run also loads the model."
       error={run.error?.message}
       result={run.data}
-      controls={<ImageSource samples={samples} value={image} onChange={setImage} />}
+      controls={
+        <Step number={4} title="DeepLabV3 per-pixel classes" code="deeplabv3_mobilenet_v3_large">
+          <ImageSource samples={samples} value={image} onChange={setImage} />
+        </Step>
+      }
     />
   );
 }

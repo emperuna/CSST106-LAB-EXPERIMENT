@@ -1,5 +1,5 @@
 import { useSamples, type ImageChoice } from "@csst106/api-client";
-import { ImageSource, RangeField, SelectField, Workbench } from "@reticle/ui";
+import { ImageSource, RangeField, SelectField, Step, Workbench } from "@reticle/ui";
 import { useState } from "react";
 import { useDetect } from "../hooks/useDetect";
 import { MODELS, percent, SIZES, type ModelName } from "../utils/models";
@@ -22,23 +22,25 @@ export function ImageTab() {
       result={run.data}
       controls={
         <>
-          <ImageSource samples={samples} value={image} onChange={setImage} />
-          <SelectField label="Model" value={model} options={MODELS} onChange={setModel} />
-          <RangeField
-            label="Confidence threshold"
-            value={conf}
-            min={0.05}
-            max={0.95}
-            step={0.05}
-            format={percent}
-            onChange={setConf}
-          />
-          <SelectField
-            label="Network input size"
-            value={imgsz}
-            options={SIZES}
-            onChange={setImgsz}
-          />
+          <Step number={1} title="Run YOLO11" code="model.predict">
+            <ImageSource samples={samples} value={image} onChange={setImage} />
+            <SelectField label="Model" value={model} options={MODELS} onChange={setModel} />
+            <RangeField
+              label="Confidence threshold"
+              value={conf}
+              min={0.05}
+              max={0.95}
+              step={0.05}
+              format={percent}
+              onChange={setConf}
+            />
+            <SelectField
+              label="Network input size"
+              value={imgsz}
+              options={SIZES}
+              onChange={setImgsz}
+            />
+          </Step>
         </>
       }
     />

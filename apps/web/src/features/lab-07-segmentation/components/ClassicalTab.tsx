@@ -1,5 +1,5 @@
 import { useSamples, type ImageChoice } from "@csst106/api-client";
-import { ImageSource, RangeField, Workbench } from "@reticle/ui";
+import { ImageSource, RangeField, Step, Workbench } from "@reticle/ui";
 import { useState } from "react";
 import { useClassicalRun } from "../hooks/useClassicalRun";
 import { DEFAULTS, PRESETS, type Settings } from "../utils/presets";
@@ -32,56 +32,64 @@ export function ClassicalTab() {
       result={run.data}
       controls={
         <>
-          <ImageSource samples={samples} value={image} onChange={choose} />
-          <RangeField
-            label="Adaptive block size"
-            value={settings.block}
-            min={3}
-            max={301}
-            step={2}
-            onChange={set("block")}
-            hint="Should be larger than the objects."
-          />
-          <RangeField
-            label="Adaptive offset C"
-            value={settings.c}
-            min={-30}
-            max={30}
-            onChange={set("c")}
-          />
-          <RangeField
-            label="Region growing tolerance"
-            value={settings.tolerance}
-            min={5}
-            max={120}
-            step={5}
-            onChange={set("tolerance")}
-            hint="Too low stalls; too high leaks."
-          />
-          <RangeField
-            label="Canny low threshold"
-            value={settings.low}
-            min={0}
-            max={500}
-            step={5}
-            onChange={set("low")}
-          />
-          <RangeField
-            label="Canny high threshold"
-            value={settings.high}
-            min={0}
-            max={500}
-            step={5}
-            onChange={set("high")}
-          />
-          <RangeField
-            label="Minimum distance between seeds"
-            value={settings.minDistance}
-            min={3}
-            max={60}
-            onChange={set("minDistance")}
-            hint="Too low splits one object; too high merges two."
-          />
+          <Step title="Input">
+            <ImageSource samples={samples} value={image} onChange={choose} />
+          </Step>
+          <Step number={1} title="Thresholding" code="cv2.threshold · cv2.adaptiveThreshold">
+            <RangeField
+              label="Adaptive block size"
+              value={settings.block}
+              min={3}
+              max={301}
+              step={2}
+              onChange={set("block")}
+              hint="Should be larger than the objects."
+            />
+            <RangeField
+              label="Adaptive offset C"
+              value={settings.c}
+              min={-30}
+              max={30}
+              onChange={set("c")}
+            />
+          </Step>
+          <Step number={2} title="Region growing and watershed" code="skimage watershed">
+            <RangeField
+              label="Region growing tolerance"
+              value={settings.tolerance}
+              min={5}
+              max={120}
+              step={5}
+              onChange={set("tolerance")}
+              hint="Too low stalls; too high leaks."
+            />
+            <RangeField
+              label="Minimum distance between seeds"
+              value={settings.minDistance}
+              min={3}
+              max={60}
+              onChange={set("minDistance")}
+              hint="Too low splits one object; too high merges two."
+            />
+          </Step>
+          <Step number={3} title="Edges and contours" code="cv2.Canny · cv2.findContours">
+            <RangeField
+              label="Canny low threshold"
+              value={settings.low}
+              min={0}
+              max={500}
+              step={5}
+              onChange={set("low")}
+            />
+            <RangeField
+              label="Canny high threshold"
+              value={settings.high}
+              min={0}
+              max={500}
+              step={5}
+              onChange={set("high")}
+            />
+          </Step>
         </>
       }
     />

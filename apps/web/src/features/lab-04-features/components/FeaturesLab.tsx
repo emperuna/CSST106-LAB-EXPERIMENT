@@ -1,5 +1,5 @@
 import { LabProvider, useSamples, type ImageChoice } from "@csst106/api-client";
-import { CheckField, FileField, ImageSource, RangeField, Workbench } from "@reticle/ui";
+import { CheckField, FileField, ImageSource, RangeField, Step, Workbench } from "@reticle/ui";
 import { useState } from "react";
 import { useFeaturesRun } from "../hooks/useFeaturesRun";
 
@@ -25,49 +25,57 @@ function Lab() {
       result={run.data}
       controls={
         <>
-          <ImageSource samples={samples} value={image} onChange={setImage} label="First image" />
-          <FileField
-            label="Second image (optional)"
-            accept="image/*"
-            file={second}
-            onChange={setSecond}
-            hint="Without one, the first image is transformed so every match can be checked."
-          />
-          <RangeField
-            label="Hessian threshold"
-            value={threshold}
-            min={50}
-            max={3000}
-            step={50}
-            onChange={setThreshold}
-            hint="Applies to SURF and U-SURF."
-          />
-          <RangeField
-            label="Rotate second image"
-            value={degrees}
-            min={-180}
-            max={180}
-            step={5}
-            disabled={second !== null}
-            format={(v) => `${v}°`}
-            onChange={setDegrees}
-          />
-          <RangeField
-            label="Scale second image"
-            value={scale}
-            min={0.4}
-            max={1.5}
-            step={0.1}
-            disabled={second !== null}
-            format={(v) => `${v}x`}
-            onChange={setScale}
-          />
-          <CheckField
-            label="Also sweep thresholds and rotations"
-            checked={sweeps}
-            onChange={setSweeps}
-            hint="Adds about 30 seconds."
-          />
+          <Step number={1} title="Load in grayscale" code="cv2.cvtColor">
+            <ImageSource samples={samples} value={image} onChange={setImage} label="First image" />
+          </Step>
+          <Step number={2} title="SURF detector" code="create_surf (NumPy)">
+            <RangeField
+              label="Hessian threshold"
+              value={threshold}
+              min={50}
+              max={3000}
+              step={50}
+              onChange={setThreshold}
+              hint="Applies to SURF and U-SURF."
+            />
+          </Step>
+          <Step number={4} title="Match two images" code="BFMatcher.knnMatch · ratio 0.75">
+            <FileField
+              label="Second image (optional)"
+              accept="image/*"
+              file={second}
+              onChange={setSecond}
+              hint="Without one, the first image is transformed so every match can be checked."
+            />
+            <RangeField
+              label="Rotate second image"
+              value={degrees}
+              min={-180}
+              max={180}
+              step={5}
+              disabled={second !== null}
+              format={(v) => `${v}°`}
+              onChange={setDegrees}
+            />
+            <RangeField
+              label="Scale second image"
+              value={scale}
+              min={0.4}
+              max={1.5}
+              step={0.1}
+              disabled={second !== null}
+              format={(v) => `${v}x`}
+              onChange={setScale}
+            />
+          </Step>
+          <Step number={5} title="Compare with U-SURF, SIFT and ORB">
+            <CheckField
+              label="Also sweep thresholds and rotations"
+              checked={sweeps}
+              onChange={setSweeps}
+              hint="Adds about 30 seconds."
+            />
+          </Step>
         </>
       }
     />

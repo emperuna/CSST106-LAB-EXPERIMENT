@@ -1,4 +1,4 @@
-import { FileField, RangeField, SelectField, Workbench } from "@reticle/ui";
+import { FileField, RangeField, SelectField, Step, Workbench } from "@reticle/ui";
 import { useState } from "react";
 import { useVideoDetect } from "../hooks/useVideoDetect";
 import { MODELS, percent, type ModelName } from "../utils/models";
@@ -20,23 +20,25 @@ export function VideoTab() {
       result={run.data}
       controls={
         <>
-          <FileField
-            label="Video file"
-            accept="video/*"
-            file={file}
-            onChange={setFile}
-            hint="Up to 60 MB. MP4 works best."
-          />
-          <SelectField label="Model" value={model} options={MODELS} onChange={setModel} />
-          <RangeField
-            label="Confidence threshold"
-            value={conf}
-            min={0.05}
-            max={0.95}
-            step={0.05}
-            format={percent}
-            onChange={setConf}
-          />
+          <Step number={1} title="Run YOLO11" code="model.predict">
+            <FileField
+              label="Video file"
+              accept="video/*"
+              file={file}
+              onChange={setFile}
+              hint="Up to 60 MB. MP4 works best."
+            />
+            <SelectField label="Model" value={model} options={MODELS} onChange={setModel} />
+            <RangeField
+              label="Confidence threshold"
+              value={conf}
+              min={0.05}
+              max={0.95}
+              step={0.05}
+              format={percent}
+              onChange={setConf}
+            />
+          </Step>
         </>
       }
     />
