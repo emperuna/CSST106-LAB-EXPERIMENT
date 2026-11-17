@@ -1,1 +1,1 @@
-export { Showcase } from "./components/Showcase";
+export { default as DesignSystemPage } from "./components/DesignSystemPage.astro";
