@@ -1,5 +1,5 @@
 /*
- * Site bar: transparent, floating over the page. The logo stands on its own at the top of the page,
+ * Site bar: transparent, floating over the page. The wordmark stands on its own at the top of the page,
  * a soft pill in the centre holds the section links, and the lab pages menu sits on the right.
  */
 :root {
@@ -44,31 +44,72 @@
   pointer-events: auto;
 }
 
+/*
+ * The logo. At the top of the page it is the full wordmark; once the page scrolls, it gives way to
+ * the mark alone in a round tile, the same height and surface as the pill and the labs button, so
+ * the bar always keeps its left anchor and no text runs behind a wordmark.
+ */
 .site-nav-logo {
+  position: relative;
   display: flex;
+  align-items: center;
   justify-self: start;
-}
-.site-nav-logo {
+  height: calc(2rem + 10px);
   color: inherit;
+}
+.site-nav-wordmark,
+.site-nav-mark {
   transition:
     opacity var(--duration-panel) var(--ease),
+    transform var(--duration-panel) var(--ease),
     visibility 0s linear 0s;
 }
-/*
- * The bar stays transparent. Once the page scrolls, the logo fades away and only the centre pill
- * remains, so no text ever runs behind the logo.
- */
-.site-nav[data-scrolled] .site-nav-logo {
-  visibility: hidden;
-  opacity: 0;
-  transition:
-    opacity var(--duration-panel) var(--ease),
-    visibility 0s linear var(--duration-panel);
-}
-.site-nav-logo svg {
+.site-nav-wordmark svg {
   display: block;
   width: auto;
   height: 1.5rem;
+}
+.site-nav-mark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: calc(2rem + 10px);
+  height: calc(2rem + 10px);
+  background: var(--color-surface);
+  border: var(--hairline) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  visibility: hidden;
+  opacity: 0;
+  transform: scale(0.9);
+}
+.site-nav-mark img {
+  display: block;
+}
+.site-nav[data-scrolled] .site-nav-wordmark {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateX(calc(-1 * var(--space-2)));
+  transition:
+    opacity var(--duration-panel) var(--ease),
+    transform var(--duration-panel) var(--ease),
+    visibility 0s linear var(--duration-panel);
+}
+.site-nav[data-scrolled] .site-nav-mark {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+}
+.site-nav-logo:hover .site-nav-mark {
+  border-color: var(--color-border-strong);
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-nav-wordmark,
+  .site-nav-mark {
+    transform: none !important;
+  }
 }
 
 /* The pill: the bar's only container. */

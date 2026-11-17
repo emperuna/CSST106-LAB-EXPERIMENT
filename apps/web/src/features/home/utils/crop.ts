@@ -9,7 +9,8 @@ export interface Rect {
  * Inline style that shows one rectangle of an image filling a frame of the given aspect ratio
  * (width / height), like object-fit: cover but on part of the image. Used to pick one panel out of
  * a saved lab figure without making a copy of it. The frame needs position: relative and
- * overflow: hidden; the image is positioned absolutely inside it.
+ * overflow: hidden; the image is positioned absolutely inside it. The transform origin sits at the
+ * centre of the visible part, so a hover zoom grows the picture in place instead of sliding it.
  */
 export function cropRules(source: { width: number; height: number }, rect: Rect, aspect: number) {
   // The part of the rectangle that is visible after covering the frame.
@@ -26,6 +27,7 @@ export function cropRules(source: { width: number; height: number }, rect: Rect,
     width: pct(source.width / visW),
     left: pct(-x0 / visW),
     top: pct(-y0 / visH),
+    transformOrigin: `${pct((x0 + visW / 2) / source.width)} ${pct((y0 + visH / 2) / source.height)}`,
   } as const;
 }
 
