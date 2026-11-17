@@ -1,4 +1,5 @@
-import { useId, type ReactNode } from "react";
+import { X } from "lucide-react";
+import { useId, type CSSProperties, type ReactNode } from "react";
 
 function Label({
   id,
@@ -15,7 +16,11 @@ function Label({
     <>
       <label className="field-label" htmlFor={id}>
         <span>{label}</span>
-        {value !== undefined && <output htmlFor={id}>{value}</output>}
+        {value !== undefined && (
+          <output htmlFor={id} className="readout">
+            {value}
+          </output>
+        )}
       </label>
       {hint && <p className="field-hint">{hint}</p>}
     </>
@@ -57,8 +62,12 @@ export function RangeField({
         step={step}
         value={value}
         disabled={disabled}
+        style={
+          { "--fill": `${(((value - min) / (max - min)) * 100).toFixed(1)}%` } as CSSProperties
+        }
         onChange={(event) => onChange(Number(event.target.value))}
       />
+      <span className="range-scale" aria-hidden="true" />
     </div>
   );
 }
@@ -124,21 +133,23 @@ export function SelectField<T extends string | number>({
   return (
     <div className="field">
       <Label id={id} label={label} hint={hint} />
-      <select
-        id={id}
-        className="input"
-        value={String(value)}
-        onChange={(event) => {
-          const match = options.find((option) => String(option.value) === event.target.value);
-          if (match) onChange(match.value);
-        }}
-      >
-        {options.map((option) => (
-          <option key={String(option.value)} value={String(option.value)}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      <div className="select">
+        <select
+          id={id}
+          className="input"
+          value={String(value)}
+          onChange={(event) => {
+            const match = options.find((option) => String(option.value) === event.target.value);
+            if (match) onChange(match.value);
+          }}
+        >
+          {options.map((option) => (
+            <option key={String(option.value)} value={String(option.value)}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 }
@@ -209,6 +220,7 @@ export function FileField({ label, accept, file, hint, onChange }: FileProps) {
       />
       {file && (
         <button type="button" className="link-button" onClick={() => onChange(null)}>
+          <X aria-hidden="true" />
           Remove {file.name}
         </button>
       )}

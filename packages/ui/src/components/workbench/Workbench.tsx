@@ -1,11 +1,8 @@
-import { useEffect, useRef, type FormEvent, type ReactNode } from "react";
-import { ResultView, type ResultData } from "./ResultView";
-
-/** Run a callback once after the first render, using its first version. */
-export function useRunOnce(callback: () => void) {
-  const first = useRef(callback);
-  useEffect(() => first.current(), []);
-}
+import { Play } from "lucide-react";
+import type { FormEvent, ReactNode } from "react";
+import { ErrorMessage } from "../error-message/ErrorMessage";
+import { Loader } from "../loader/Loader";
+import { ResultView, type ResultData } from "../result-view/ResultView";
 
 interface Props {
   controls: ReactNode;
@@ -40,16 +37,13 @@ export function Workbench({
       <form className="controls" onSubmit={submit}>
         {controls}
         <button type="submit" className="button" disabled={running || disabled}>
+          {!running && <Play aria-hidden="true" />}
           {running ? `${pendingLabel}…` : runLabel}
         </button>
       </form>
       <div className="output" aria-live="polite" aria-busy={running}>
-        {error && (
-          <p className="error" role="alert">
-            {error}
-          </p>
-        )}
-        {running && !result && <p className="waiting">{pendingLabel}…</p>}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {running && !result && <Loader label={pendingLabel} />}
         {!running && !result && !error && <p className="waiting">{emptyMessage}</p>}
         {result && (
           <div className={running ? "is-stale" : undefined}>

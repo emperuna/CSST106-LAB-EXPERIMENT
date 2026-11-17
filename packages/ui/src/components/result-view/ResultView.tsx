@@ -1,5 +1,7 @@
+import { X } from "lucide-react";
 import { useRef, useState } from "react";
-import { Histogram, LineChart, type ChartData } from "./charts";
+import { Histogram, LineChart, type ChartData } from "../charts/charts";
+import { ImageFrame } from "../image-frame/ImageFrame";
 
 interface PanelData {
   title: string;
@@ -45,19 +47,14 @@ function Panels({ panels }: { panels: PanelData[] }) {
           {group && <h3>{group}</h3>}
           <div className={`panel-grid${items.some((item) => item.large) ? " is-large" : ""}`}>
             {items.map((panel) => (
-              <figure key={panel.title} className="panel">
-                <button
-                  type="button"
-                  onClick={() => show(panel)}
-                  aria-label={`Enlarge: ${panel.title}`}
-                >
-                  <img src={panel.image} alt={panel.title} />
-                </button>
-                <figcaption>
-                  <strong>{panel.title}</strong>
-                  {panel.caption && <span>{panel.caption}</span>}
-                </figcaption>
-              </figure>
+              <ImageFrame
+                key={panel.title}
+                src={panel.image}
+                alt={panel.title}
+                title={panel.title}
+                readout={panel.caption}
+                onOpen={() => show(panel)}
+              />
             ))}
           </div>
         </section>
@@ -69,9 +66,10 @@ function Panels({ panels }: { panels: PanelData[] }) {
               <strong>{open.title}</strong>
               <button
                 type="button"
-                className="button-secondary"
+                className="button button-secondary button-small"
                 onClick={() => dialog.current?.close()}
               >
+                <X aria-hidden="true" />
                 Close
               </button>
             </div>

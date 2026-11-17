@@ -1,0 +1,39 @@
+/* Workbench */
+.workbench {
+  display: grid;
+  grid-template-columns: minmax(16rem, 19rem) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5);
+}
+.controls > .button {
+  width: 100%;
+}
+.output {
+  min-width: 0;
+}
+.is-stale {
+  opacity: 0.5;
+  transition: opacity var(--duration) var(--ease);
+}
+.waiting,
+.loader {
+  margin: 0;
+  padding: var(--space-8);
+  font-size: var(--text-sm);
+  text-align: center;
+  color: var(--color-muted);
+  background: var(--color-sunken);
+  border-radius: var(--radius-lg);
+}
+
+@media (max-width: 52rem) {
+  .workbench {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

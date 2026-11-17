@@ -1,3 +1,4 @@
+import { Upload } from "lucide-react";
 import { useEffect, useId, useState, type DragEvent } from "react";
 
 export interface SampleOption {
@@ -87,7 +88,10 @@ export function ImageSource({ samples, value, onChange, label = "Input image" }:
             <span className="dropzone-name">{file.name}</span>
           </>
         ) : (
-          <span>Upload an image, or drop one here</span>
+          <>
+            <Upload aria-hidden="true" />
+            <span>Upload an image, or drop one here</span>
+          </>
         )}
         <input
           id={inputId}
