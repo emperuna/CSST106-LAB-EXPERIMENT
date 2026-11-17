@@ -1,35 +1,55 @@
-/* Design tokens: the single source of color, type and spacing values. */
-:root {
-  color-scheme: light dark;
+/*
+ * Reticle, the design system: tokens for a flat measuring instrument, in graphite and
+ * teal. Dark only: there is one theme, so every token has a single value.
+ * Tone separates surfaces; there are no shadows.
+ */
+@import "./fonts.css";
 
-  --color-bg: #f7f6f3;
-  --color-surface: #fcfcfb;
-  --color-sunken: #efeeea;
-  --color-text: #1b1c1f;
-  --color-muted: #5a5d64;
-  --color-border: #dcdbd5;
-  --color-grid: #e7e6e1;
-  --color-accent: #8f2424;
-  --color-accent-ink: #ffffff;
-  --color-success: #1f7a48;
-  --color-danger: #b23222;
-  --color-danger-surface: #fbeeeb;
+:root {
+  color-scheme: dark;
+
+  --color-bg: #121414;
+  --color-surface: #1a1d1e;
+  --color-sunken: #232728; /* Recessed panels and readout displays */
+  --color-text: #ecebe6;
+  --color-muted: #a9aaa5; /* Hints, metadata and axis labels only */
+  --color-border: #2c3133; /* Hairlines */
+  --color-border-strong: #6e7578; /* Control outlines, at least 3:1 on surface */
+  --color-grid: #262a2b;
+  --color-well: #2b2b2b; /* Neutral grey behind images, so results aren't tinted */
+  --color-tick: #4aa3b8;
+  --color-accent: #4aa3b8; /* Teal: actions and selection, with near-black text on it */
+  --color-accent-hover: #63b5c8;
+  --color-accent-ink: #0a0a0a;
+  --color-accent-soft: #173840;
+  --color-focus: #ecebe6;
+  --color-success: #6cc48c;
+  --color-danger: #ff8a65;
+  --color-danger-surface: #36201a;
 
   /* Chart series, always assigned in this order. */
-  --series-1: #2a78d6;
-  --series-2: #eb6834;
-  --series-3: #1baf7a;
-  --series-4: #eda100;
-  --series-5: #e87ba4;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+}
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-serif: ui-serif, Georgia, "Times New Roman", serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --text-xs: 0.75rem;
+:root {
+  --font-display: "Geist Serif", ui-serif, Georgia, "Times New Roman", serif;
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, Menlo, Consolas, monospace;
+  /* Geist Serif ships in one weight, so headings never ask for a faux bold. */
+  --weight-display: 400;
+  --tracking-display: -0.01em;
+
+  --text-xs: 0.8125rem; /* 13px, the smallest size used */
   --text-sm: 0.875rem;
   --text-md: 1rem;
   --text-lg: 1.25rem;
-  --text-xl: 1.875rem;
+  --text-xl: 1.625rem;
+  --text-2xl: 2.5rem;
+  --text-3xl: clamp(2.5rem, 2rem + 2.5vw, 4rem);
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -39,30 +59,18 @@
   --space-6: 1.5rem;
   --space-8: 2rem;
   --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
 
+  --radius-sm: 4px;
   --radius: 6px;
-  --sidebar-width: 15.5rem;
-}
+  --radius-lg: 10px;
+  --radius-pill: 999px;
+  --hairline: 1px;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #141517;
-    --color-surface: #1a1a19;
-    --color-sunken: #232425;
-    --color-text: #f0efec;
-    --color-muted: #aeb0b4;
-    --color-border: #383a3d;
-    --color-grid: #2c2d2f;
-    --color-accent: #e88d80;
-    --color-accent-ink: #1b1212;
-    --color-success: #66c592;
-    --color-danger: #f0907f;
-    --color-danger-surface: #33201d;
+  --duration: 120ms; /* Hover and press feedback */
+  --duration-panel: 240ms; /* Menus and panels opening: a fade and a short reveal, never a bounce */
+  --ease: cubic-bezier(0.2, 0, 0, 1);
 
-    --series-1: #3987e5;
-    --series-2: #d95926;
-    --series-3: #199e70;
-    --series-4: #c98500;
-    --series-5: #d55181;
-  }
+  --sidebar-width: 16rem;
 }

@@ -1,0 +1,13 @@
+/* Fonts are installed with the project, so the site also works without internet. */
+@import "@fontsource-variable/geist/index.css";
+@import "@fontsource/dm-mono/400.css";
+@import "@fontsource/dm-mono/500.css";
+
+/* Geist Serif by Vercel, under the SIL Open Font License (fonts/geist-serif/OFL.txt). */
+@font-face {
+  font-family: "Geist Serif";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/geist-serif/GeistSerif-Regular.woff2") format("woff2");
+}

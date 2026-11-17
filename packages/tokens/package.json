@@ -1,6 +1,15 @@
 {
   "name": "@csst106/tokens",
   "version": "0.1.0",
+  "description": "Reticle design tokens, fonts and brand assets",
   "private": true,
-  "exports": { "./tokens.css": "./tokens.css" }
+  "exports": {
+    "./tokens.css": "./tokens.css",
+    "./fonts.css": "./fonts.css",
+    "./brand/*": "./brand/*"
+  },
+  "dependencies": {
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource/dm-mono": "^5.3.0"
+  }
 }
