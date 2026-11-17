@@ -1,10 +1,12 @@
 /*
- * Home page layout, following the design-taste-frontend skill: every section is exactly one screen,
- * one 1280px wrap with equal edges, text left and pictures right, a fixed opaque header.
+ * Home page layout: one 1280px wrap with equal edges, under the transparent site bar. The hero and
+ * pixel zoom fill the screen; the content sections clear the bar and size to their content.
  * Colors, type and spacing come from Reticle's tokens.
  */
 :root {
   --home-nav: var(--site-nav-h, 72px);
+  /* Content sections clear the fixed bar, so a heading never lands under it after a nav jump. */
+  --home-section-pad: calc(var(--home-nav) + var(--space-8)) 0 var(--space-16);
   --home-gut: 80px;
   --home-padt: 120px;
   --home-padb: 72px;
@@ -270,7 +272,7 @@ main.home {
  * result from that lab, and the pictures grow as the labs get harder.
  */
 .journey {
-  padding: var(--space-16) 0;
+  padding: var(--home-section-pad);
   background: var(--color-bg);
 }
 .journey-head {
@@ -398,7 +400,7 @@ main.home {
  * same square pixels as the rest of the page, and the conditions it was measured under.
  */
 .measures {
-  padding: var(--space-16) 0;
+  padding: var(--home-section-pad);
   background: var(--color-bg);
 }
 .measures-head {
@@ -547,7 +549,7 @@ main.home {
  * shows beside its line, so moving the Canny thresholds changes the code you read.
  */
 .behind {
-  padding: var(--space-16) 0;
+  padding: var(--home-section-pad);
   background: var(--color-bg);
 }
 .behind-head {
@@ -775,7 +777,7 @@ main.home {
  * with what this project did (teal, plus), says why, and shows one measured consequence.
  */
 .sheetdiff {
-  padding: var(--space-16) 0;
+  padding: var(--home-section-pad);
   background: var(--color-bg);
 }
 .sheetdiff-head {
@@ -1037,8 +1039,9 @@ main.home {
 
 /* Phone: one column */
 @media (max-width: 639px) {
-  .journey {
-    padding: var(--space-16) 0;
+  /* Intro paragraphs step down to body size, so they stay well below the heading. */
+  .intro {
+    font-size: var(--text-md);
   }
   .journey-tiles {
     grid-template-columns: 1fr;
