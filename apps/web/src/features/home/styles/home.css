@@ -1,0 +1,1109 @@
+/*
+ * Home page layout, following the design-taste-frontend skill: every section is exactly one screen,
+ * one 1280px wrap with equal edges, text left and pictures right, a fixed opaque header.
+ * Colors, type and spacing come from Reticle's tokens.
+ */
+:root {
+  --home-nav: var(--site-nav-h, 72px);
+  --home-gut: 80px;
+  --home-padt: 120px;
+  --home-padb: 72px;
+  scroll-padding-top: 0;
+}
+@media (max-width: 1023px) {
+  :root {
+    --home-gut: 48px;
+  }
+}
+@media (max-width: 639px) {
+  :root {
+    --home-gut: 24px;
+    --home-padt: 96px;
+    --home-padb: 48px;
+  }
+}
+
+main.home {
+  display: block;
+  max-width: none;
+  padding: 0;
+}
+.wrap {
+  width: min(100% - 2 * var(--home-gut), 1280px);
+  margin-inline: auto;
+}
+
+/* Sections: exactly one screen each */
+.home .section {
+  box-sizing: border-box;
+  height: 100svh;
+  min-height: 0;
+  padding: var(--home-padt) 0 var(--home-padb);
+  overflow: hidden;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+/* The bar floats over the hero, so the hero fills the whole first screen and starts below it. */
+.home .hero {
+  height: 100svh;
+  padding-top: calc(var(--home-nav) + var(--space-12));
+  padding-bottom: var(--space-12);
+}
+.home h1 {
+  margin: 0;
+  font-size: clamp(2.5rem, 1.5rem + 2.8vw, 3.75rem);
+  line-height: 1.02;
+}
+.home h2 {
+  margin: 0;
+  font-size: clamp(1.875rem, 1.3rem + 1.9vw, 3rem);
+  line-height: 1.08;
+}
+.home h3 {
+  margin: var(--space-4) 0 var(--space-1);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-display);
+}
+.intro {
+  max-width: 62ch;
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-lg);
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+
+/*
+ * Hero: NASA spacewalk footage redrawn as dithered pixels, behind a short headline. The canvas fills the
+ * hero; the shader keeps the left side sparse so the words stay readable.
+ */
+.home .hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.dither-video {
+  position: absolute;
+  inset: 0;
+}
+.dither-video canvas,
+.dither-video-poster {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.dither-video-poster {
+  object-fit: cover;
+  filter: grayscale(1);
+  opacity: 0.35;
+}
+.hero-copy {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+.hero-copy h1 {
+  font-size: clamp(2.5rem, 1.5rem + 3.2vw, 4.5rem);
+  line-height: 1.02;
+}
+.hero-line {
+  max-width: 40ch;
+  margin: var(--space-4) auto 0;
+  font-size: var(--text-md);
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/*
+ * Pixels: an image is a grid of numbers. The track is three screens tall and the stage stays
+ * pinned inside it, so scrolling drives the zoom. A header row carries the heading, the current
+ * step and the zoom readout; the canvas fills the rest of the screen.
+ */
+.pixels {
+  background: var(--color-bg);
+}
+.pixel-track {
+  position: relative;
+  height: 320svh;
+}
+.pixel-stage {
+  position: sticky;
+  top: 0;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--space-5);
+  height: 100svh;
+  padding: calc(var(--home-nav) + var(--space-6)) 0 var(--space-6);
+  overflow: hidden;
+}
+/* Heading on the left, the current step and the zoom readout on the right, on the page itself. */
+/* The heading and the caption's last line share a baseline. */
+.pixel-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 26rem);
+  gap: var(--space-8);
+  align-items: last baseline;
+}
+/* Room for a two-line caption, so the canvas doesn't move between steps; short ones sit low. */
+.pixel-meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  min-height: 4.5rem;
+}
+.pixel-meta-line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+.pixel-head h2 {
+  font-size: clamp(1.875rem, 1.3rem + 1.9vw, 3rem);
+}
+.pixel-view {
+  position: relative;
+  min-height: 0;
+}
+/* Short windows: a tighter header, so the picture keeps most of the height. */
+@media (max-height: 680px) {
+  .pixel-stage {
+    gap: var(--space-3);
+    padding: calc(var(--home-nav) + var(--space-2)) 0 var(--space-3);
+  }
+  .pixel-head h2 {
+    font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2rem);
+  }
+}
+.pixel-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* Three squares, one per step: the logo's pixel, lit for the current step. */
+.pixel-progress {
+  display: flex;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pixel-progress li {
+  width: 8px;
+  height: 8px;
+  background: var(--color-border-strong);
+  transition: background-color var(--duration-panel) var(--ease);
+}
+.pixel-progress li[data-done] {
+  background: var(--color-muted);
+}
+.pixel-progress li[aria-current] {
+  background: var(--color-accent);
+}
+.pixel-caption {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-muted);
+  animation: pixel-caption-in var(--duration-panel) var(--ease);
+}
+.pixel-caption strong {
+  font-weight: 600;
+  color: var(--color-text);
+}
+.pixel-count {
+  color: var(--color-accent);
+}
+@keyframes pixel-caption-in {
+  from {
+    opacity: 0;
+  }
+}
+.pixel-readout {
+  margin-left: auto;
+  color: var(--color-muted);
+}
+
+/* Reduced motion: the three steps as stills, side by side. */
+.pixel-stills {
+  padding: calc(var(--home-nav) + var(--space-8)) 0 var(--space-16);
+}
+.pixel-still-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.pixel-still-row li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.pixel-still-row .pixel-canvas {
+  position: static;
+  width: 100%;
+  aspect-ratio: 1;
+  height: auto;
+  margin-bottom: var(--space-2);
+  background: var(--color-well);
+  border-radius: var(--radius-lg);
+}
+.pixel-still-row strong {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-display);
+}
+.pixel-still-row span {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+/*
+ * Labs: the journey. Three stages, each a label beside its tiles. Every tile is filled with a real
+ * result from that lab, and the pictures grow as the labs get harder.
+ */
+.journey {
+  padding: var(--space-16) 0;
+  background: var(--color-bg);
+}
+.journey-head {
+  max-width: 44rem;
+}
+.journey-stages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  margin: var(--space-12) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.journey-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+  gap: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: var(--hairline) solid var(--color-border);
+}
+.journey-stage-label h3 {
+  margin: var(--space-2) 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-display);
+}
+.journey-stage-label p {
+  max-width: 28ch;
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+.journey-stage-number {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-accent);
+}
+.journey-tiles {
+  display: grid;
+  grid-template-columns: repeat(var(--tiles), minmax(0, 1fr));
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lab-tile {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+  background: var(--color-surface);
+  border: var(--hairline) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color var(--duration) var(--ease);
+}
+.lab-tile:hover {
+  border-color: var(--color-border-strong);
+}
+.lab-tile-media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: var(--color-well);
+}
+.lab-tile-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-panel) var(--ease);
+}
+/* Several panels of one figure, side by side and centred on the image well. */
+.lab-tile-panels {
+  position: absolute;
+  inset: 8% 6%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4%;
+  align-items: center;
+}
+/* Each panel keeps its own aspect ratio, which the crop's maths relies on. */
+.lab-tile-panel {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+}
+/* Hover zooms the picture 2%, inside its frame. */
+.lab-tile:hover .lab-tile-media img {
+  transform: scale(1.02);
+}
+.lab-tile-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-5) var(--space-5);
+}
+.lab-tile-number {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+.lab-tile-meta strong {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-display);
+}
+.lab-tile-summary {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-muted);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/*
+ * Results: the readout board. Six channels in a rack that shares its hairlines, like an instrument
+ * panel: a large mono reading, what it measures, a small picture of the comparison built from the
+ * same square pixels as the rest of the page, and the conditions it was measured under.
+ */
+.measures {
+  padding: var(--space-16) 0;
+  background: var(--color-bg);
+}
+.measures-head {
+  max-width: 44rem;
+}
+.measures-rack {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--hairline);
+  margin: var(--space-12) 0 0;
+  padding: 0;
+  list-style: none;
+  background: var(--color-border);
+  border: var(--hairline) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.measures-rack > li {
+  display: flex;
+}
+.measure {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  color: inherit;
+  text-decoration: none;
+  background: var(--color-bg);
+  transition: background-color var(--duration) var(--ease);
+}
+.measure:hover {
+  background: var(--color-surface);
+}
+.measure-channel {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+.measure-channel span:first-child {
+  color: var(--color-accent);
+}
+.measure-value {
+  margin-top: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: clamp(2.5rem, 1.9rem + 1.8vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.measure-unit {
+  margin-left: var(--space-2);
+  font-size: var(--text-md);
+  letter-spacing: 0;
+  color: var(--color-muted);
+}
+.measure-label {
+  font-size: var(--text-sm);
+}
+/* Each visual takes the same height, so the notes line up across a row. */
+.measure-visual {
+  display: flex;
+  align-items: center;
+  min-height: 6.5rem;
+  margin: var(--space-2) 0;
+}
+.measure-pixels {
+  display: grid;
+  grid-template-columns: repeat(20, minmax(0, 1fr));
+  gap: 3px;
+  width: 100%;
+}
+.measure-pixels span {
+  aspect-ratio: 1;
+  background: var(--color-sunken);
+}
+.measure-pixels span[data-lit] {
+  background: var(--color-accent);
+}
+.measure-bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+.measure-bar {
+  display: grid;
+  grid-template-columns: 9.5rem minmax(0, 1fr) 3.5rem;
+  gap: var(--space-3);
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+.measure-bar[data-current] {
+  color: var(--color-text);
+}
+.measure-bar-label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.measure-bar-text {
+  text-align: right;
+}
+.measure-bar-track {
+  height: 6px;
+  background: var(--color-sunken);
+}
+.measure-bar-track span {
+  display: block;
+  height: 100%;
+  background: var(--color-border-strong);
+}
+.measure-bar[data-current] .measure-bar-track span {
+  background: var(--color-accent);
+}
+.measure-objects {
+  display: flex;
+  gap: 4px;
+}
+.measure-objects span {
+  width: 9px;
+  height: 9px;
+  background: var(--color-sunken);
+}
+.measure-objects span[data-lit] {
+  background: var(--color-border-strong);
+}
+.measure-bar[data-current] .measure-objects span[data-lit] {
+  background: var(--color-accent);
+}
+.measure-note {
+  margin-top: auto;
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+
+/*
+ * How it works: Lab 2's controls beside the exact code they feed. The active control and its lines
+ * share a teal tint, and a line joins the control to its call. The value each control passes in
+ * shows beside its line, so moving the Canny thresholds changes the code you read.
+ */
+.behind {
+  padding: var(--space-16) 0;
+  background: var(--color-bg);
+}
+.behind-head {
+  max-width: 44rem;
+}
+.c2c {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--space-16);
+  align-items: start;
+  margin-top: var(--space-12);
+}
+.c2c-label {
+  display: block;
+  margin-bottom: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+.c2c-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: var(--hairline) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+.c2c-control {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  border-radius: var(--radius);
+  transition: background-color var(--duration) var(--ease);
+}
+.c2c-control[data-active] {
+  background: var(--color-accent-soft);
+}
+.c2c-control-value {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  background: var(--color-sunken);
+  border-radius: var(--radius-sm);
+}
+.c2c-control-value img {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+.c2c-segmented {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  background: var(--color-sunken);
+  border-radius: var(--radius);
+}
+.c2c-segmented button {
+  padding: var(--space-1) var(--space-2);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  background: transparent;
+  border: var(--hairline) solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    color var(--duration) var(--ease),
+    background-color var(--duration) var(--ease);
+}
+.c2c-segmented button:hover {
+  color: var(--color-text);
+}
+.c2c-segmented button[aria-pressed="true"] {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+.c2c-run {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--space-2);
+  margin: var(--space-2) var(--space-3) var(--space-1);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-accent-ink);
+  background: var(--color-accent);
+  border-radius: var(--radius);
+  outline: 2px solid transparent;
+  outline-offset: 3px;
+  cursor: default;
+  transition: outline-color var(--duration) var(--ease);
+}
+.c2c-run[data-active] {
+  outline-color: var(--color-accent);
+}
+.c2c-result {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: center;
+  margin: var(--space-5) 0 0;
+}
+.c2c-result-frame {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--color-well);
+  border-radius: var(--radius);
+}
+.c2c-result figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+.c2c-result-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xl);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--color-text);
+}
+.c2c-code {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+.c2c-code .c2c-label {
+  margin-bottom: calc(var(--space-3) - var(--space-4));
+}
+.c2c-file {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: var(--hairline) solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+.c2c-path {
+  display: block;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  overflow-wrap: anywhere;
+  border-bottom: var(--hairline) solid var(--color-border);
+}
+.c2c-file pre {
+  margin: 0;
+  padding: var(--space-2) 0;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1.9;
+}
+.c2c-line {
+  display: block;
+  padding: 0 var(--space-4);
+  white-space: pre;
+  color: var(--color-muted);
+  border-left: 2px solid transparent;
+  transition:
+    background-color var(--duration) var(--ease),
+    border-color var(--duration) var(--ease),
+    color var(--duration) var(--ease);
+}
+.c2c-line[data-key] {
+  color: var(--color-text);
+}
+.c2c-line[data-indent] {
+  padding-left: var(--space-8);
+}
+.c2c-line[data-active] {
+  background: var(--color-accent-soft);
+  border-left-color: var(--color-accent);
+}
+.c2c-value {
+  color: var(--color-accent);
+}
+.c2c-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.c2c-link path {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+@media (max-width: 1180px) {
+  .c2c {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: var(--space-12);
+  }
+}
+@media (max-width: 859px) {
+  .c2c {
+    grid-template-columns: 1fr;
+  }
+}
+
+/*
+ * Notes: a diff against the lab sheets. Each note pairs what the sheet asks for (struck, minus)
+ * with what this project did (teal, plus), says why, and shows one measured consequence.
+ */
+.sheetdiff {
+  padding: var(--space-16) 0;
+  background: var(--color-bg);
+}
+.sheetdiff-head {
+  max-width: 44rem;
+}
+.sheetdiff-list {
+  margin: var(--space-12) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--hairline) solid var(--color-border);
+}
+.diff-note {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 7fr) minmax(0, 2fr);
+  gap: var(--space-8);
+  align-items: start;
+  padding: var(--space-6) 0;
+  border-bottom: var(--hairline) solid var(--color-border);
+}
+.diff-lab {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-accent);
+}
+.diff-meta h3 {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-display);
+}
+.diff-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.diff-line {
+  display: grid;
+  grid-template-columns: 1.25rem 7rem minmax(0, 1fr);
+  align-items: baseline;
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+}
+.diff-sign {
+  font-family: var(--font-mono);
+}
+.diff-who {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+.diff-del {
+  background: var(--color-danger-surface);
+}
+.diff-del .diff-sign {
+  color: var(--color-danger);
+}
+.diff-del .diff-text {
+  color: var(--color-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--color-danger);
+}
+.diff-del .diff-none {
+  font-style: italic;
+  text-decoration: none;
+}
+.diff-add {
+  background: var(--color-accent-soft);
+}
+.diff-add .diff-sign {
+  color: var(--color-accent);
+}
+.diff-add .diff-text {
+  color: var(--color-text);
+}
+.diff-text {
+  overflow-wrap: anywhere;
+}
+.diff-why {
+  max-width: 62ch;
+  margin: var(--space-3) 0 0;
+  padding-left: calc(1.25rem + var(--space-3));
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+.diff-evidence {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+.diff-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xl);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--color-text);
+}
+.sheetdiff-weak {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+  align-items: baseline;
+  margin-top: var(--space-8);
+  font-size: var(--text-sm);
+}
+.sheetdiff-weak-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-accent);
+}
+.sheetdiff-weak ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-muted);
+}
+.sheetdiff-weak li::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: var(--space-2);
+  vertical-align: middle;
+  background: var(--color-border-strong);
+}
+@media (max-width: 1023px) {
+  .diff-note {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+    gap: var(--space-4) var(--space-6);
+  }
+  .diff-evidence {
+    grid-column: 2;
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--space-3);
+  }
+  .diff-value {
+    font-size: var(--text-xl);
+  }
+}
+@media (max-width: 639px) {
+  .diff-note {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    padding: var(--space-5) 0;
+  }
+  .diff-meta h3 {
+    font-size: var(--text-lg);
+  }
+  .diff-evidence {
+    grid-column: auto;
+  }
+  .diff-line {
+    grid-template-columns: 1.25rem minmax(0, 1fr);
+  }
+  .diff-who {
+    grid-column: 2;
+  }
+  .diff-text {
+    grid-column: 2;
+  }
+  .diff-why {
+    padding-left: 0;
+  }
+}
+
+/*
+ * Close: the answer to the hero. The page opened asking to see what a computer sees; it ends on
+ * that same frame, still and in the same dither, quietened behind one line. No button.
+ */
+.finale {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 70svh;
+  overflow: hidden;
+  text-align: center;
+  background: var(--color-bg);
+}
+.finale-still {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.finale-copy {
+  position: relative;
+  z-index: 1;
+}
+.finale-copy h2 {
+  max-width: 20ch;
+  text-wrap: balance;
+  margin: 0 auto;
+  font-size: clamp(2.25rem, 1.4rem + 3.2vw, 4.5rem);
+  line-height: 1.05;
+}
+
+/* Footer: quiet on purpose, since the close above carries the ending. No hairline: the close's
+   picture dissolves straight into it. The logo and two links on
+   one line. */
+.site-footer {
+  padding: var(--space-6) 0 var(--space-8);
+  color: var(--color-muted);
+  background: var(--color-bg);
+  font-size: var(--text-sm);
+}
+.footer-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-8);
+}
+.footer-logo {
+  display: inline-block;
+  color: var(--color-text);
+}
+.footer-logo svg {
+  display: block;
+  width: auto;
+  height: 1.25rem;
+}
+.footer-links {
+  display: flex;
+  gap: var(--space-6);
+}
+.footer-links a {
+  color: var(--color-muted);
+  text-decoration: none;
+  transition: color var(--duration) var(--ease);
+}
+.footer-links a:hover {
+  color: var(--color-text);
+}
+
+/* Tablet: splits stack, text first; the window fills what is left */
+@media (max-width: 1023px) {
+  .journey-stage {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+  .pixel-still-row {
+    grid-template-columns: 1fr;
+  }
+  .measures-rack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Phone: one column */
+@media (max-width: 639px) {
+  .journey {
+    padding: var(--space-16) 0;
+  }
+  .journey-tiles {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  /* A compact row per lab: picture left, words right, so seven labs stay short on a phone. */
+  .lab-tile {
+    flex-direction: row;
+    align-items: center;
+  }
+  /* Keeps its aspect ratio, which the panel crops rely on. */
+  .lab-tile-media {
+    flex: none;
+    width: 40%;
+  }
+  .lab-tile-meta {
+    min-width: 0;
+    padding: var(--space-3) var(--space-4);
+  }
+  .lab-tile-meta strong {
+    font-size: var(--text-md);
+  }
+  .pixel-head {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  .pixel-meta {
+    min-height: 0;
+  }
+  .home .section {
+    height: auto;
+    min-height: 100lvh;
+  }
+  .home .hero {
+    min-height: 100lvh;
+  }
+  .measures-rack {
+    grid-template-columns: 1fr;
+  }
+  .measure {
+    padding: var(--space-5);
+  }
+  .measure-bar {
+    grid-template-columns: 6.5rem minmax(0, 1fr) 3rem;
+  }
+  /* Long method names wrap rather than being cut off. */
+  .measure-bar-label {
+    white-space: normal;
+  }
+  .measure-visual {
+    min-height: 0;
+  }
+  /* The line first, then the picture at its own shape, so a narrow screen doesn't crop it. */
+  .finale {
+    flex-direction: column;
+    gap: var(--space-8);
+    min-height: 0;
+    padding-top: var(--space-16);
+  }
+  .finale-copy {
+    order: -1;
+  }
+  .finale-still {
+    position: static;
+    height: auto;
+    aspect-ratio: 3 / 2;
+  }
+}
