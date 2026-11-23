@@ -22,9 +22,12 @@ dist/
 /runs/
 
 # Lab 6 results that are large or easy to regenerate. The saved plots, JSON files
-# and test_examples.png stay in Git because the Web UI and the report use them.
+# and test_examples.png stay in Git because the Web UI and the report use them, and so do
+# the two test detections the home page shows (it is built from a fresh clone).
 /outputs/lab06/demo_*.mp4
 /outputs/lab06/test_*.jpg
+!/outputs/lab06/test_1 (66).jpg
+!/outputs/lab06/test_3 (143).jpg
 /outputs/lab06/training_log.txt
 
 # Design tool output
