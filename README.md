@@ -1,6 +1,38 @@
-# CSST106 - Perception and Computer Vision: Laboratory Experiments
+<div align="center">
 
-Laboratory Experiments 1-7 and their Web UI, in one app-centric monorepo.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="packages/tokens/brand/reticle-logo-dark.svg">
+  <img src="packages/tokens/brand/reticle-logo-light.svg" alt="Reticle" width="280">
+</picture>
+
+### CSST106 · Perception and Computer Vision
+
+Seven computer vision laboratory experiments and the Web UI that runs them, in one monorepo.
+
+<p>
+  <img src="https://img.shields.io/badge/CSST106-Perception%20and%20Computer%20Vision-4aa3b8?style=flat-square&labelColor=1a1d1e" alt="CSST106: Perception and Computer Vision">
+  <img src="https://img.shields.io/badge/labs-7-4aa3b8?style=flat-square&labelColor=1a1d1e" alt="7 labs">
+</p>
+<p>
+  <img src="https://img.shields.io/badge/Python-3.12-4aa3b8?style=flat-square&labelColor=1a1d1e&logo=python&logoColor=white" alt="Python 3.12">
+  <img src="https://img.shields.io/badge/PyTorch-2.2.2-4aa3b8?style=flat-square&labelColor=1a1d1e&logo=pytorch&logoColor=white" alt="PyTorch 2.2.2">
+  <img src="https://img.shields.io/badge/OpenCV-4.10-4aa3b8?style=flat-square&labelColor=1a1d1e&logo=opencv&logoColor=white" alt="OpenCV 4.10">
+  <img src="https://img.shields.io/badge/Ultralytics-YOLO11-4aa3b8?style=flat-square&labelColor=1a1d1e" alt="Ultralytics YOLO11">
+  <img src="https://img.shields.io/badge/FastAPI-0.115%2B-4aa3b8?style=flat-square&labelColor=1a1d1e&logo=fastapi&logoColor=white" alt="FastAPI 0.115 or newer">
+  <img src="https://img.shields.io/badge/Astro-7-4aa3b8?style=flat-square&labelColor=1a1d1e&logo=astro&logoColor=white" alt="Astro 7">
+  <img src="https://img.shields.io/badge/React-19-4aa3b8?style=flat-square&labelColor=1a1d1e&logo=react&logoColor=white" alt="React 19">
+  <img src="https://img.shields.io/badge/uv-workspace-4aa3b8?style=flat-square&labelColor=1a1d1e&logo=uv&logoColor=white" alt="uv workspace">
+  <img src="https://img.shields.io/badge/pnpm-workspace-4aa3b8?style=flat-square&labelColor=1a1d1e&logo=pnpm&logoColor=white" alt="pnpm workspace">
+</p>
+
+[Labs](#labs) · [Setup](#setup) · [Running](#running) · [Differences from the lab sheets](#where-the-code-differs-from-the-lab-sheets) · [Data sources](#data-sources)
+
+</div>
+
+## Layout
+
+Laboratory Experiments 1-7 and their Web UI, in one app-centric monorepo. The site and its design
+system are called Reticle.
 
 ```text
 apps/
@@ -8,8 +40,8 @@ apps/
   api/            FastAPI modular monolith: one module per lab, shared code in core/
 packages/
   cv-labs/        Python code for Labs 1-7, with sample images, weights and tests
-  tokens/         Design tokens (CSS variables)
-  ui/             Shared React components
+  tokens/         Reticle design tokens, fonts and brand files
+  ui/             Reticle components (@reticle/ui)
   api-client/     Generated API types, typed client, shared TanStack Query client
   config/         Shared TypeScript, ESLint and Prettier settings
 infra/            Deployment files (not added yet)
