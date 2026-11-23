@@ -1,0 +1,39 @@
+# Only the API, cv-labs, the saved outputs and the uv files go into the image.
+.git
+.github
+.claude
+.taste-skill
+**/.venv
+**/__pycache__
+**/*.py[cod]
+**/.pytest_cache
+**/node_modules
+**/dist
+**/.astro
+
+# The frontend deploys separately (Netlify).
+apps/web
+packages/ui
+packages/tokens
+packages/api-client
+packages/config
+docs
+pnpm-lock.yaml
+pnpm-workspace.yaml
+package.json
+
+# Downloaded or generated locally; the image downloads its own models and data.
+data
+models
+runs
+outputs/lab06/demo_*.mp4
+outputs/lab06/test_*.jpg
+outputs/lab06/training_log.txt
+
+# Tests aren't needed to serve the API.
+packages/cv-labs/tests
+apps/api/tests
+
+.env
+.env.*
+.DS_Store
